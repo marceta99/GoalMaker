@@ -15,6 +15,8 @@ namespace GoalMakerServer.Entities
         public DateTime DateCreated { get; set; }
         public string Description { get; set; }
 
+        public List<Initiative> Initiatives { get; set; }
+
         [ForeignKey("User")]
         public int OwnerId { get; set; }
         public User Owner { get; set; }
