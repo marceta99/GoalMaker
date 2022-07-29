@@ -10,6 +10,9 @@ namespace GoalMakerServer.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int PercentageOfSuccess { get; set; }
+        public int ConfidenceLevel { get; set; }
+        public string TeamCountry { get; set; }
 
         [ForeignKey("Organization")]
         public int OrganizationId { get; set; }

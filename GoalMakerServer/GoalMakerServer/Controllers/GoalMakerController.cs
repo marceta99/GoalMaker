@@ -53,7 +53,7 @@ namespace GoalMakerServer.Controllers
         }
 
         [HttpGet("GetOrganizationTeamsWithId")]
-        public async Task<ActionResult<List<Team>>> GetOrganizationTeamsWithId([FromQuery] int organizationId)
+        public async Task<ActionResult<List<TeamDTO>>> GetOrganizationTeamsWithId([FromQuery] int organizationId)
         {
             var teams = await _context.Teams
                 .Where(t => t.Organization.Id == organizationId)
@@ -62,7 +62,17 @@ namespace GoalMakerServer.Controllers
 
             if (teams == null) return NotFound("there is no teams for that organization id");
 
-            return Ok(teams);
+            List<TeamDTO> teamsDto = new List<TeamDTO>(); 
+
+            foreach(Team t in teams)
+            {
+                TeamDTO tdo = new TeamDTO { Name = t.Name, OrganizationId = t.OrganizationId,
+                                            TeamCountry = t.TeamCountry, ConfidenceLevel = t.ConfidenceLevel, 
+                                            PercentageOfSuccess = t.PercentageOfSuccess, Id = t.Id};
+                tdo.Owner = GetTeamOwnerPrivate(t.Id);
+                teamsDto.Add(tdo); 
+            }
+            return Ok(teamsDto);
         }
 
         [HttpGet("GetTeam")]
@@ -77,12 +87,37 @@ namespace GoalMakerServer.Controllers
             return Ok(team);
         }
 
+        [HttpGet("GetTeamOwner")]
+        public ActionResult<User> GetTeamOwner([FromQuery]int teamId)
+        {
+            var teamOwner = _context.TeamsUsers
+                .Include(tm => tm.Member)
+                .FirstOrDefault(tm => (tm.TeamId == teamId && tm.IsOwner == true) );
+
+            if (teamOwner == null) return NotFound("there is no teamOwner for that team id");
+
+            return Ok(teamOwner.Member);
+        }
+
+        private User GetTeamOwnerPrivate(int teamId)
+        {
+            var teamOwner = _context.TeamsUsers
+               .Include(tm => tm.Member)
+               .FirstOrDefault(tm => (tm.TeamId == teamId && tm.IsOwner == true));
+
+            if (teamOwner == null) return null; 
+            var owner = teamOwner.Member;
+
+            return owner; 
+        }
+
         [HttpGet("GetTeamGoals")]
         public async Task<ActionResult<List<Goal>>> GetTeamGoals([FromQuery] int teamId)
         {
             var goals = await _context.Goals
                 .Where(g => g.Team.Id == teamId)
                 .Include(g => g.Cycle)
+                .Include(g => g.GoalOwner)
                 .ToListAsync();
 
             if (goals == null) return NotFound("there is no goals for that team name");

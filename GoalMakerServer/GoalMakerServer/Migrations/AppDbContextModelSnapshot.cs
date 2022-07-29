@@ -183,11 +183,20 @@ namespace GoalMakerServer.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<int>("ConfidenceLevel")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
+
+                    b.Property<int>("PercentageOfSuccess")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeamCountry")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -284,7 +293,7 @@ namespace GoalMakerServer.Migrations
             modelBuilder.Entity("GoalMakerServer.Entities.Initiative", b =>
                 {
                     b.HasOne("GoalMakerServer.Entities.KeyResult", "KeyResult")
-                        .WithMany()
+                        .WithMany("Initiatives")
                         .HasForeignKey("KeyResultId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -358,6 +367,11 @@ namespace GoalMakerServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("GoalMakerServer.Entities.KeyResult", b =>
+                {
+                    b.Navigation("Initiatives");
                 });
 #pragma warning restore 612, 618
         }
