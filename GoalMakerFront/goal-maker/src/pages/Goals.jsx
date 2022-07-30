@@ -18,6 +18,8 @@ const Goals = () => {
   const {teamId} = useParams(); 
   const [activeForm, setActiveForm] = useState(false) ; 
   const [activeNewGoal, setActiveNewGoal] = useState(false) ; 
+  const [teamOwner, setTeamOwner] = useState() ; 
+  const [teamEmployees, setTeamEmployees] = useState(); 
 
   useEffect(()=>{
     const getData = async()=>{
@@ -32,6 +34,19 @@ const Goals = () => {
       const data2 = await response2.json() ; 
       setTeam(data2) ;
       console.log(data2); 
+
+      const response3 =
+       await fetch("https://localhost:5001/api/GoalMaker/GetTeamOwner?teamId="+teamId)  
+      const data3 = await response3.json() ; 
+      setTeamOwner(data3) ;
+      console.log(data3); 
+
+      const response4 =
+       await fetch("https://localhost:5001/api/GoalMaker/GetTeamMembers?teamId="+teamId)  
+      const data4 = await response4.json() ; 
+      setTeamEmployees(data4) ;
+      console.log(data4); 
+
       }
       getData(); 
   },[])
@@ -45,7 +60,8 @@ const Goals = () => {
     
 
   }
-  if(activeForm)return <TeamEditForm team={team} setActiveForm={setActiveForm} setTeam={setTeam}/>
+  if(activeForm)return <TeamEditForm team={team} setActiveForm={setActiveForm}
+                       setTeam={setTeam} teamOwner={teamOwner} teamEmployees={teamEmployees}/>
 
   if(activeNewGoal)return <NewGoalForm team={team} setActiveForm={setActiveForm} setTeam={setTeam}/>
 

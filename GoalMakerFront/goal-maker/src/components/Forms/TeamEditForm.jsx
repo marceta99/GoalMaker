@@ -1,16 +1,52 @@
 import React from 'react'
 import "./TeamEditForm.css"; 
+import Select from 'react-select';
+import { useEffect, useState } from 'react';
 
-const TeamEditForm = ({team, setActiveForm, setTeam}) => {
+const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) => {
+    const [employees, setEmployees] = useState(); 
+    const [options, setOptions] = useState(); 
+    const [selectedValue, setSelectedValue] = useState(); 
+    const [selectedMembers, setSelectedMembers] = useState(); 
+
+
+    useEffect(()=>{
+        const trenutniClanoviTima = teamEmployees.map((item)=>{
+            return {value : item.id, label : item.firstName+ " "+ item.lastName}
+        })
+        setSelectedMembers(trenutniClanoviTima);
+
+        const getData = async()=>{
+            const response1 = 
+            await fetch("https://localhost:5001/api/GoalMaker/GetOrganizationEmployees?organizationId=1")  
+            const data1 = await response1.json() ; 
+            setEmployees(data1) ; 
+            console.log(data1);
+           
+            let opcije = data1.map((item)=>{
+                return {value : item.id, label : item.firstName + " " +item.lastName}
+            } )
+            setOptions(opcije) ;
+            console.log(team); 
+            }
+          getData() ;
+      },[]);
 
   const onSubmit = async (e)=>{
     setActiveForm(false); 
+
+    const deleteResponse = await fetch("https://localhost:44344/api/GoalMaker/DeleteMembersFromTeam?teamId="+team.id,{
+        method: "DELETE", 
+    })
+     console.log(deleteResponse); 
+
     console.log(e); 
     const updatedTeam = {
         "name": e.target[0].value,
         "teamCountry": e.target[1].value,
         "percentageOfSuccess":e.target[2].value,
-        "confidenceLevel": e.target[3].value
+        "confidenceLevel": e.target[3].value,
+        "ownerId":selectedValue
       };
     const response = await fetch("https://localhost:44344/api/GoalMaker/UpdateTeam?teamId="+team.id,{
         method: "PUT", 
@@ -24,6 +60,21 @@ const TeamEditForm = ({team, setActiveForm, setTeam}) => {
        await fetch("https://localhost:5001/api/GoalMaker/GetTeam?teamId="+team.id)  
       const data2 = await response2.json() ; 
       setTeam(data2) ;
+
+      const idArray = [] ; 
+      selectedMembers.forEach(selected => {
+        idArray.push(selected.value); 
+      }); 
+      const response3 = await fetch("https://localhost:44344/api/GoalMaker/AddMembersToTeam?teamId="+team.id,{
+        method: "POST", 
+        body : JSON.stringify(idArray),
+        headers: {
+            'Content-type': 'application/json'
+        }
+    })
+    console.log(response3); 
+    
+
   }  
 
   return (
@@ -57,6 +108,36 @@ const TeamEditForm = ({team, setActiveForm, setTeam}) => {
                         <input type="text" defaultValue={team.confidenceLevel} disabled></input>
                     </div>
                    
+                    {employees && <>
+                        <div class="input-field">
+                        <label>Team Owner</label>
+                        <select required 
+                            onChange={(e)=>setSelectedValue(e.target.value)}>
+                            <option value={teamOwner.id}>{teamOwner.firstName+" "+teamOwner.lastName }</option>
+                            {employees.map((employee, index)=>(
+                                <option key={index} value={employee.id} >
+                                    {employee.firstName+ " "+employee.lastName}
+                                </option>
+                            ))}
+                        </select>
+                        </div>
+
+                        <div class="input-field">
+                            <Select
+                            
+                            isMulti={true}
+                            value={selectedMembers}
+                            onChange={(selectedOptions)=>{
+                                setSelectedMembers(selectedOptions);
+                                console.log(selectedOptions);
+                            }}
+                            options={options}
+                            />
+                        </div>
+                        </>
+
+                    }
+
                 </div>
 
                 <button class="nextBtn">

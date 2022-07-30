@@ -212,6 +212,32 @@ namespace GoalMakerServer.Controllers
             return Ok(initiative);
         }
 
+        [HttpGet("GetTeamMembers")]
+        public async Task<ActionResult<List<UserDTO>>> GetTeamMembers([FromQuery] int teamId)
+        {
+            var tms = await _context.TeamsUsers
+                .Where(t => t.TeamId == teamId).ToListAsync();
+
+            if (tms == null) return NotFound("there is no members for that team id");
+
+            List<UserDTO> teamMembers = new List<UserDTO>(); 
+
+            foreach(var tm in tms)
+            {
+                var member = _context.Users.FirstOrDefault(u=> u.Id == tm.MemberId);
+                UserDTO udto = new UserDTO
+                {
+                    Id = member.Id,
+                    FirstName = member.FirstName,
+                    LastName = member.LastName,
+                    Email = member.Email
+                };
+                teamMembers.Add(udto); 
+            }
+
+            return Ok(teamMembers);
+        }
+
 
         #endregion
 
@@ -659,6 +685,31 @@ namespace GoalMakerServer.Controllers
                                 .ToListAsync();
 
             _context.Initiatives.RemoveRange(initiatives);
+        }
+
+        [HttpDelete("DeleteMembersFromTeam")]
+        public async Task<ActionResult> DeleteMembersFromTeam([FromQuery] int teamId)
+        {
+            var team = _context.Teams.FirstOrDefault(t => t.Id == teamId);
+
+            if (team == null) return BadRequest("team with that id doesn't exists");
+
+            var tms = await _context.TeamsUsers.Where(t => t.TeamId == teamId).ToListAsync();
+
+            if (tms == null) return BadRequest("problem"); 
+
+            foreach(var t in tms)
+            {
+                _context.TeamsUsers.Remove(t); 
+            }
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return Ok("success");
+            }
+            return BadRequest("problem with deleting members from team");
         }
 
         #endregion
