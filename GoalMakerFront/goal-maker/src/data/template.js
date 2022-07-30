@@ -14,8 +14,8 @@ const gridTeamProfile = (props) => (
         src="https://picsum.photos/200/300?random=2"
         alt="team"
       />
-      <p>{props.owner.firstName}</p>
-      <p>{props.owner.lastName}</p>
+      <p>{props?.owner?.firstName}</p>
+      <p>{props?.owner?.lastName}</p>
     </div>
   );
 

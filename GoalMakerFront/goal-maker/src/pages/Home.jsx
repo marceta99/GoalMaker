@@ -4,10 +4,12 @@ import { GridComponent, Inject, ColumnsDirective, ColumnDirective, Search, Page,
 import { teamsGrid } from '../data/template';
 import Header  from '../components/Header';
 import { useNavigate } from 'react-router-dom';
+import NewTeamForm from '../components/Forms/NewTeamForm';
 
 const Home = () => {
   const [organization, setOrganization]= useState();  
-  const [teams, setTeams] = useState(); 
+  const [teams, setTeams] = useState();
+  const [activeNewTeam, setActiveNewTeam] = useState(false);  
   const navigate = useNavigate(); 
 
   useEffect(()=>{
@@ -35,13 +37,22 @@ const Home = () => {
     
 
   }
+  if(activeNewTeam)return <NewTeamForm organization={organization} 
+          setActiveNewTeam={setActiveNewTeam} setTeams={setTeams}/>
 
   return (
     <div>
 
+    {organization && 
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-      <Header category="Organization" title={organization ? organization.name + "'s Teams :" : ""} />
-      <GridComponent
+    <button class="nextBtn dugme" onClick={()=>setActiveNewTeam(true)}>
+            <span class="btnText">New Team</span>
+            <i class="uil uil-navigator"></i>
+      </button>
+      <Header category= {organization ? "Organization -  " + organization.name : ""} 
+      title={organization ? organization.name + "'s Teams" : ""} />
+      {teams && <>
+        <GridComponent
         dataSource={teams}
         width="auto"
         allowPaging
@@ -56,7 +67,9 @@ const Home = () => {
         <Inject services={[Search, Page, Toolbar]} />
 
       </GridComponent>
-    </div>
+      </>}  
+      
+    </div>}
 
 
 

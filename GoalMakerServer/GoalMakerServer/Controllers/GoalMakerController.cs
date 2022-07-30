@@ -1,5 +1,6 @@
 ﻿using GoalMakerServer.Data;
 using GoalMakerServer.DTOS;
+using GoalMakerServer.DTOS.PostPutDTOS;
 using GoalMakerServer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -211,11 +212,13 @@ namespace GoalMakerServer.Controllers
         }
 
         [HttpPost("NewTeam")]
-        public async Task<ActionResult<TeamDTO>> NewTeam([FromBody] TeamDTO teamDTO) 
+        public async Task<ActionResult<TeamDTO>> NewTeam([FromQuery]int organizationId,[FromBody] PPTeamDTO teamDTO) 
         {
             if (teamDTO == null) return BadRequest("bad request");
 
-            Team t = new Team { Name = teamDTO.Name, OrganizationId = teamDTO.OrganizationId };
+            Team t = new Team { Name = teamDTO.Name, OrganizationId = organizationId, 
+                ConfidenceLevel = teamDTO.ConfidenceLevel, PercentageOfSuccess = teamDTO.PercentageOfSuccess ,
+                TeamCountry = teamDTO.TeamCountry};
 
             _context.Teams.Add(t);
 
@@ -343,7 +346,7 @@ namespace GoalMakerServer.Controllers
         }
 
         [HttpPut("UpdateTeam")]
-        public async Task<ActionResult> UpdateOrganization([FromQuery] int teamId, [FromBody] TeamDTO teamDTO)
+        public async Task<ActionResult> UpdateTeam([FromQuery] int teamId, [FromBody] PPTeamDTO teamDTO)
         {
             if (!ModelState.IsValid) return BadRequest("bad request");
 
@@ -352,6 +355,9 @@ namespace GoalMakerServer.Controllers
             if (team == null) return NotFound("Team with that id doesn't exists");
 
             team.Name = teamDTO.Name;
+            team.TeamCountry = teamDTO.TeamCountry;
+            team.ConfidenceLevel = teamDTO.ConfidenceLevel;
+            team.PercentageOfSuccess = teamDTO.PercentageOfSuccess; 
             //team.OrganizationId = teamDTO.OrganizationId; ovo sam namerno zakomentarisao jer mi je nelogicno da timovi
             //mogu da promene organizaciju i zato to ovde ne radim.tako da ako je tim u jednoj org, tu ce i ostati
 

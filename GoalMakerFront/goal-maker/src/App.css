@@ -45,3 +45,52 @@
 .e-input-group:not(.e-float-icon-left), .e-input-group.e-success:not(.e-float-icon-left), .e-input-group.e-warning:not(.e-float-icon-left), .e-input-group.e-error:not(.e-float-icon-left), .e-input-group.e-control-wrapper:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-success:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-warning:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-error:not(.e-float-icon-left){
   border: none;
 }
+
+.myContainer{
+  display: flex;
+  flex-direction: row;
+}
+.left{
+  width: 70%;
+}
+.right{
+  margin-bottom: 20px;
+}
+
+
+
+/*//////////////////////////////////////////////////*/
+.dugme, .backBtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  max-width: 200px;
+  width: 100%;
+  border: none;
+  outline: none;
+  color: #fff;
+  border-radius: 5px;
+  margin: 25px 0;
+  background-color: #4070f4;
+  transition: all 0.3s linear;
+  cursor: pointer;
+}
+.btnText{
+  font-size: 14px;
+  font-weight: 400;
+}
+.dugme:hover{
+  background-color: #265df2;
+}
+.dugme i,
+.backBtn i{
+  margin: 0 6px;
+}
+.backBtn i{
+  transform: rotate(180deg);
+}
+
+.dugme , .backBtn{
+  margin-right: 14px;
+}

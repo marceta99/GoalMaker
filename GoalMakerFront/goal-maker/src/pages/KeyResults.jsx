@@ -43,11 +43,34 @@ const KeyResults = () => {
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-      {goal && <>
-      <CircularBar percentage={goal.percentageOfSuccess}/>
-      <Header category={goal.team.name} title={goal.name} />
-      </>
-      } 
+       {goal && 
+      <div className="myContainer">
+        <div className='left'>
+        <CircularBar percentage={goal.percentageOfSuccess}/>
+        <Header category={goal.team.name} title={goal.name} />
+        </div>
+
+        <div className="e-card right" id="basic">
+          <div className="e-card-header">
+            <div className="e-card-header-caption">
+              <div className="e-card-title">Goal Description</div>
+            </div>
+          </div>
+          <div className="e-card-content">
+            Communicating with Windows 10 and Other Apps, the second in a five-part series written by Succinctly series
+            author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
+            the White Paper section of Syncfusion’s Technology Resource Portal.
+            </div>
+            <div className="e-card-actions e-card-vertical">
+              
+            <button className="e-card-btn" style={{color : "blue"}}>Edit Goal</button>
+            <button className="e-card-btn">Delete Goal</button>
+            </div>
+      </div>
+
+    </div>
+    }
+       
       <GridComponent
         dataSource={keyResults}
         width="auto"

@@ -5,12 +5,19 @@ import Header  from '../components/Header';
 import { goalsGrid } from '../data/goalsTemplate';
 import CircularBar from '../components/ProgressBar/CircularBar';
 import { useNavigate, useParams } from "react-router-dom";
+import '../../node_modules/@syncfusion/ej2-layouts/styles/material.css';
+import "../App.css"; 
+import {BiEdit} from "react-icons/bi"; 
+import TeamEditForm from '../components/Forms/TeamEditForm';
+import NewGoalForm from '../components/Forms/NewGoalForm';
 
 const Goals = () => {
   const [goals, setGoals]=useState() ; 
   const [team, setTeam] = useState(); 
   const navigate = useNavigate();
   const {teamId} = useParams(); 
+  const [activeForm, setActiveForm] = useState(false) ; 
+  const [activeNewGoal, setActiveNewGoal] = useState(false) ; 
 
   useEffect(()=>{
     const getData = async()=>{
@@ -38,13 +45,48 @@ const Goals = () => {
     
 
   }
+  if(activeForm)return <TeamEditForm team={team} setActiveForm={setActiveForm} setTeam={setTeam}/>
+
+  if(activeNewGoal)return <NewGoalForm team={team} setActiveForm={setActiveForm} setTeam={setTeam}/>
 
   return (
-    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
-      {team &&<>
-      <CircularBar percentage={team.percentageOfSuccess}/>
-      <Header category={team.organization.name} title={team.name} />
-      </>}
+    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl ">
+
+      {team && 
+      <div className="myContainer">
+        <div className='left'>
+          <div style={{display : "flex"}}>
+          <CircularBar percentage={team.percentageOfSuccess}/>
+          </div>
+        <Header category={team.organization.name} title={team.name} />
+
+          <button class="nextBtn dugme" onClick={()=>setActiveNewGoal(true)}>
+                      <span class="btnText">New Goal</span>
+                      <i class="uil uil-navigator"></i>
+          </button>
+        </div>
+
+        <div className="e-card right" id="basic" style={{marginLeft :"10px"}}>
+          <div className="e-card-header">
+            <div className="e-card-header-caption">
+              <div className="e-card-title">Team Description</div>
+            </div>
+          </div>
+          <div className="e-card-content">
+            Communicating with Windows 10 and Other Apps, the second in a five-part series written by Succinctly series
+            author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
+            the White Paper section of Syncfusion’s Technology Resource Portal.
+            </div>
+            <div className="e-card-actions e-card-vertical">
+              
+            <button onClick={()=>setActiveForm(true)} 
+            className="e-card-btn" style={{color : "blue"}}>Edit Team</button>
+            <button className="e-card-btn">Delete Team</button>
+            </div>
+      </div>
+
+    </div>
+    }
       <GridComponent
         dataSource={goals}
         width="auto"
@@ -60,6 +102,7 @@ const Goals = () => {
         <Inject services={[Search, Page, Toolbar]} />
 
       </GridComponent>
+      
     </div>
   );
 };
