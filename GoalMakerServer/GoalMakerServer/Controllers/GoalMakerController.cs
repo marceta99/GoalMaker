@@ -76,6 +76,31 @@ namespace GoalMakerServer.Controllers
             return Ok(teamsDto);
         }
 
+        [HttpGet("GetOrganizationEmployees")]
+        public async Task<ActionResult<List<UserDTO>>> GetOrganizationEmployees([FromQuery] int organizationId)
+        {
+            var employees = await _context.Users
+                .Where(u => u.OrganizationId == organizationId)
+                .ToListAsync();
+
+            if (employees == null) return NotFound("there is no employees for that organization id");
+
+            List<UserDTO> employeesDTOs = new List<UserDTO>();
+
+            foreach (User u in employees)
+            {
+                UserDTO udo = new UserDTO
+                {
+                   Id = u.Id, 
+                   Email = u.Email,
+                   FirstName = u.FirstName, 
+                   LastName = u.LastName
+                };
+                employeesDTOs.Add(udo); 
+            }
+            return Ok(employeesDTOs);
+        }
+
         [HttpGet("GetTeam")]
         public  ActionResult<Team> GetTeam([FromQuery] int teamId)
         {
@@ -221,16 +246,55 @@ namespace GoalMakerServer.Controllers
                 TeamCountry = teamDTO.TeamCountry};
 
             _context.Teams.Add(t);
+            var result1 = await _context.SaveChangesAsync();
 
+            if (result1 > 0)
+            {
+                var lastId = _context.Teams.Max(t => t.Id);
+                TeamMember tm = new TeamMember { IsOwner = true, MemberId = teamDTO.OwnerId, TeamId = lastId };
+                _context.TeamsUsers.Add(tm);
+
+                var result = await _context.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    var last = _context.Teams.Max(t => t.Id);
+                    return Created("~api/GoalMaker/GetTeam?teamId=" + last, t);
+                }
+                return BadRequest("problem with creating new team ");
+
+            }
+
+            return BadRequest("problem with creating new team ");
+        }
+
+        [HttpPost("AddMembersToTeam")]
+        public async Task<ActionResult<TeamDTO>> AddMembersToTeam([FromQuery] int teamId, [FromBody] List<int> usersIds)
+        {
+            if (usersIds == null) return BadRequest("bad request");
+
+            var team = _context.Teams.FirstOrDefault(t => t.Id == teamId);
+
+            if (team == null) return BadRequest("Team with that id doesnt exists"); 
+                
+            foreach(int id in usersIds)
+            {
+
+                TeamMember tm = new TeamMember { IsOwner = false, MemberId = id, TeamId = teamId };
+                _context.TeamsUsers.Add(tm);
+            }
+  
             var result = await _context.SaveChangesAsync();
 
             if (result > 0)
             {
-                var lastId = _context.Teams.Max(t => t.Id);
-                return Created("~api/GoalMaker/GetTeam?teamId=" + lastId, t);
+                return Ok("Member successfully added to team"); 
             }
-            return BadRequest("problem with creating new team ");
+            return BadRequest("problem with addint member to a team ");
+
         }
+
+
 
         [HttpPost("NewGoal")]
         public async Task<ActionResult<TeamDTO>> NewGoal([FromBody] GoalDTO goalDTO)

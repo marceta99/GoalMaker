@@ -11,5 +11,6 @@ namespace GoalMakerServer.DTOS.PostPutDTOS
         public string TeamCountry { get; set; }
         public int PercentageOfSuccess { get; set; }
         public int ConfidenceLevel { get; set; }
+        public int OwnerId { get; set; }
     }
 }
