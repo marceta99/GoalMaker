@@ -1,56 +1,61 @@
 import React, { useEffect, useState } from 'react'
 import "./TeamEditForm.css"; 
 
-const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
+const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal}) => {
 
   const [employees, setEmployees] = useState(); 
-  const [selectedValue, setSelectedValue] = useState(); 
+  const [selectedOwner, setSelectedOwner] = useState(); 
 
   useEffect(()=>{
+    console.log(goal);
     const getData = async()=>{
         const response1 = 
-        await fetch("https://localhost:5001/api/GoalMaker/GetTeamMembers?teamId="+team.id);  
+        await fetch("https://localhost:5001/api/GoalMaker/GetTeamMembers?teamId="+goal.teamId);  
         const data1 = await response1.json() ; 
         setEmployees(data1) ; 
         console.log(data1);
        
+        setSelectedOwner(goalOwner.id); 
         }
       getData() ;
   },[]);
 
   const onSubmit = async (e)=>{
-    setActiveNewGoal(false); 
+    setActiveEditGoal(false); 
     console.log(e); 
-    console.log(selectedValue); 
-    const newGoal = {
+    const updatedGoal = {
         "name": e.target[0].value,
         "percentageOfSuccess":e.target[1].value,
         "confidenceLevel": e.target[2].value,
         "startDate": e.target[3].value,
         "endDate": e.target[4].value,
-        "goalOwnerId":selectedValue,
-        "teamId": team.id,
+        "goalOwnerId":selectedOwner,
         cycleId : 1
       };
-    const response = await fetch("https://localhost:44344/api/GoalMaker/NewGoal",{
-        method: "POST", 
-        body : JSON.stringify(newGoal),
+    const response = await fetch("https://localhost:44344/api/GoalMaker/UpdateGoal?goalId="+goal.id,{
+        method: "PUT", 
+        body : JSON.stringify(updatedGoal),
         headers: {
             'Content-type': 'application/json'
         }
     })
-    console.log(response);
-    
-    const response1 =
-       await fetch("https://localhost:5001/api/GoalMaker/GetTeamGoals?teamId="+team.id)  
-      const data1 = await response1.json() ; 
-      setGoals(data1) ;
-      console.log(data1); 
-  }  
+    console.log(response); 
 
+    const response2 =
+         await fetch("https://localhost:5001/api/GoalMaker/GetGoal?goalId="+goal.id);  
+        const data2 = await response2.json() ; 
+        setGoal(data2) ;
+        console.log(data2); 
+
+        const response3 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetUser?userId="+data2.goalOwnerId);  
+        const data3 = await response3.json() ; 
+        setGoalOwner(data3) ; 
+        console.log(data3);
+  }  
   return (
     <div class="container">
-    <header>New Goal</header>
+    <header>Update Goal</header>
 
     <form action="#" onSubmit={(e)=>onSubmit(e)}>
         <div class="form first">
@@ -61,35 +66,36 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
                 <div class="fields">
                     <div class="input-field">
                         <label>Goal Name</label>
-                        <input type="text" placeholder='Goal name' required></input>
+                        <input type="text" defaultValue={goal.name} required></input>
                     </div>
 
                     <div class="input-field">
                         <label>Percentage of success (evaluated)</label>
-                        <input type="text" defaultValue={0} disabled></input>
+                        <input type="text" defaultValue={goal.percentageOfSuccess} disabled></input>
                     </div>
 
                     <div class="input-field">
                         <label>Confidence level (evaluated)</label>
-                        <input type="text" defaultValue={0} disabled></input>
+                        <input type="text" defaultValue={goal.confidenceLevel} disabled></input>
                     </div>
 
                     <div class="input-field">
                         <label>Start Date</label>
-                        <input type="date" placeholder="Enter start date" required></input>
+                        <input type="date" defaultValue={goal.startDate.slice(0,10)} required></input>
                     </div>
 
                     <div class="input-field">
-                        <label>End Date</label>
-                        <input type="date" placeholder="Enter end date" required></input>
+                        <label>{goal.endDate}</label>
+                        <input type="date" defaultValue={goal.endDate.slice(0,10)} required></input>
                     </div>
 
                     {employees && 
                         <div class="input-field">
                         <label>Goal Owner</label>
                         <select required 
-                            onChange={(e)=>setSelectedValue(e.target.value)}>
-                            <option disabled selected>Select owner</option>
+                            onChange={(e)=>setSelectedOwner(e.target.value)}>
+                            <option disabled selected value={goalOwner?.id}>
+                                {goalOwner?.firstName+ " "+ goalOwner?.lastName}</option>
                             {employees.map((employee, index)=>(
                                 <option key={index} value={employee.id}>
                                     {employee.firstName+ " "+employee.lastName}
@@ -114,4 +120,4 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
   )
 }
 
-export default NewGoalForm ;
+export default GoalEditForm ;

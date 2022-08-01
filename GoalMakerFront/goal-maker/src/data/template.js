@@ -77,6 +77,10 @@ export const teamsGrid = [
           name: 'home',
           icon: <FiShoppingBag />,
         },
+        {
+          name: 'my teams',
+          icon: <FiShoppingBag />,
+        },
       ],
     },
   

@@ -22,7 +22,24 @@ namespace GoalMakerServer.Controllers
             _context = context; 
         }
         #region GET
-  
+        [HttpGet("GetUser")]
+        public async Task<ActionResult<UserDTO>> GetUser([FromQuery] int userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null) return BadRequest("user with that id doesn't exists");
+
+            UserDTO udto = new UserDTO
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Id = user.Id
+            }; 
+
+            return Ok(udto);
+        }
+
         [HttpGet("GetOrganizations")]
         public async Task<ActionResult<List<Organization>>> GetOrganizations()
         {
@@ -447,9 +464,13 @@ namespace GoalMakerServer.Controllers
             team.Name = teamDTO.Name;
             team.TeamCountry = teamDTO.TeamCountry;
             team.ConfidenceLevel = teamDTO.ConfidenceLevel;
-            team.PercentageOfSuccess = teamDTO.PercentageOfSuccess; 
+            team.PercentageOfSuccess = teamDTO.PercentageOfSuccess;
             //team.OrganizationId = teamDTO.OrganizationId; ovo sam namerno zakomentarisao jer mi je nelogicno da timovi
             //mogu da promene organizaciju i zato to ovde ne radim.tako da ako je tim u jednoj org, tu ce i ostati
+
+            bool isOwnerAdded = await AddTeamOwner(teamDTO.OwnerId, teamId);
+
+            if (!isOwnerAdded) return BadRequest("problem with adding team owner"); 
 
             var result = await _context.SaveChangesAsync();
 
@@ -460,6 +481,35 @@ namespace GoalMakerServer.Controllers
             return BadRequest("problem with updating team ");
 
         }
+        
+        private async Task<bool> AddTeamOwner(int ownerId, int teamId)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == ownerId);
+
+            if (user == null) return false;
+
+            TeamMember tm = new TeamMember { IsOwner = true, MemberId = ownerId, TeamId = teamId };
+
+            var tm1 = _context.TeamsUsers.FirstOrDefault(tu => tu.TeamId == teamId && tu.MemberId == ownerId);
+
+            if(tm1 == null) //new owner is not alredy in team
+            {
+                _context.TeamsUsers.Add(tm); 
+            }
+            else //new owner is alredy in team
+            {
+                tm1.IsOwner = true; 
+            }
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return true;
+            }
+            return false;
+
+        } 
 
         [HttpPut("UpdateGoal")]
         public async Task<ActionResult> UpdateGoal([FromQuery] int goalId, [FromBody] GoalDTO goalDTO)
@@ -477,15 +527,23 @@ namespace GoalMakerServer.Controllers
             goal.EndDate = goalDTO.EndDate;
             goal.GoalOwnerId = goalDTO.GoalOwnerId;
             //goal.TeamId = goalDTO.TeamId; ovo mi je isto nelogicno da goal promeni tim 
-            goal.CycleId = goalDTO.CycleId;  
+            //goal.CycleId = goalDTO.CycleId;
 
-            var result = await _context.SaveChangesAsync();
+            try {
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return Ok("goal updated");
+                }
+                return BadRequest("problem with updating goal ");
 
-            if (result > 0)
-            {
-                return Ok("goal updated");
             }
-            return BadRequest("problem with updating goal ");
+            catch (Exception e)
+            {
+                var err = e;
+                return BadRequest("problem with updating goal ");
+
+            }
 
         }
 

@@ -39,6 +39,7 @@ const Goals = () => {
        await fetch("https://localhost:5001/api/GoalMaker/GetTeamOwner?teamId="+teamId)  
       const data3 = await response3.json() ; 
       setTeamOwner(data3) ;
+      console.log("team owner :"); 
       console.log(data3); 
 
       const response4 =
@@ -61,9 +62,10 @@ const Goals = () => {
 
   }
   if(activeForm)return <TeamEditForm team={team} setActiveForm={setActiveForm}
-                       setTeam={setTeam} teamOwner={teamOwner} teamEmployees={teamEmployees}/>
+                       setTeam={setTeam} teamOwner={teamOwner} teamEmployees={teamEmployees}
+                       setTeamEmployees={setTeamEmployees} />
 
-  if(activeNewGoal)return <NewGoalForm team={team} setActiveForm={setActiveForm} setTeam={setTeam}/>
+  if(activeNewGoal)return <NewGoalForm team={team} setActiveNewGoal={setActiveNewGoal} setGoals={setGoals}/>
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl ">

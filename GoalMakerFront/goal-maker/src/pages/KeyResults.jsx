@@ -6,16 +6,23 @@ import { GridComponent, Inject, ColumnsDirective, ColumnDirective,
 import Header  from '../components/Header';
 import CircularBar from '../components/ProgressBar/CircularBar';
 import { useNavigate } from "react-router-dom";
+import NewKeyResultForm from '../components/Forms/NewKeyResultForm';
+import GoalEditForm from '../components/Forms/GoalEditForm';
 
 
 const KeyResults = () => {
   const { goalId } = useParams(); 
   const [keyResults, setKeyResults]= useState();  
   const [goal, setGoal] = useState(); 
+  const [activeNewKeyResult, setActiveNewKeyResult] = useState(false); 
+  const [activeEditGoal, setActiveEditGoal] = useState(false) ;
+  const [goalOwner, setGoalOwner] = useState() ; 
   const navigate = useNavigate() ; 
+  
 
   useEffect(()=>{
-    const getData = async()=>{
+    console.log("REFRESHHHH");
+        const getData = async()=>{
         const response1 =
          await fetch("https://localhost:5001/api/GoalMaker/GetGoalKeyResults?goalId="+goalId);  
         const data1 = await response1.json() ; 
@@ -27,6 +34,13 @@ const KeyResults = () => {
         const data2 = await response2.json() ; 
         setGoal(data2) ;
         console.log(data2); 
+
+        const response3 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetUser?userId="+data2.goalOwnerId);  
+        const data3 = await response3.json() ; 
+        setGoalOwner(data3) ; 
+        console.log(data3);
+
         }
         getData(); 
   },[]) ;
@@ -40,14 +54,25 @@ const KeyResults = () => {
     
 
   }
+  if(activeEditGoal)return <GoalEditForm goal={goal} setActiveEditGoal={setActiveEditGoal}
+                            goalOwner={goalOwner} setGoalOwner={setGoalOwner} setGoal={setGoal}/>
+
+  if(activeNewKeyResult)return <NewKeyResultForm goal={goal} setActiveNewKeyResult={setActiveNewKeyResult}
+                              setKeyResults={setKeyResults}/>
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
        {goal && 
       <div className="myContainer">
         <div className='left'>
+        <div style={{display : "flex"}}>
         <CircularBar percentage={goal.percentageOfSuccess}/>
+        </div>
         <Header category={goal.team.name} title={goal.name} />
+        <button class="nextBtn dugme" onClick={()=>setActiveNewKeyResult(true)}>
+                      <span class="btnText">New Key Result</span>
+                      <i class="uil uil-navigator"></i>
+          </button>
         </div>
 
         <div className="e-card right" id="basic">
@@ -63,7 +88,8 @@ const KeyResults = () => {
             </div>
             <div className="e-card-actions e-card-vertical">
               
-            <button className="e-card-btn" style={{color : "blue"}}>Edit Goal</button>
+            <button className="e-card-btn" style={{color : "blue"}} 
+            onClick={()=>setActiveEditGoal(true)}>Edit Goal</button>
             <button className="e-card-btn">Delete Goal</button>
             </div>
       </div>

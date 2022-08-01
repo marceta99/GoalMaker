@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import "./TeamEditForm.css"; 
 
-const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
+const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
 
   const [employees, setEmployees] = useState(); 
-  const [selectedValue, setSelectedValue] = useState(); 
+  const [selectedOwner, setSelectedOwner] = useState(); 
 
   useEffect(()=>{
     const getData = async()=>{
         const response1 = 
-        await fetch("https://localhost:5001/api/GoalMaker/GetTeamMembers?teamId="+team.id);  
+        await fetch("https://localhost:5001/api/GoalMaker/GetTeamMembers?teamId="+goal.teamId);  
         const data1 = await response1.json() ; 
         setEmployees(data1) ; 
         console.log(data1);
@@ -19,22 +19,20 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
   },[]);
 
   const onSubmit = async (e)=>{
-    setActiveNewGoal(false); 
+    setActiveNewKeyResult(false); 
     console.log(e); 
-    console.log(selectedValue); 
-    const newGoal = {
+
+    const newKeyResult = {
         "name": e.target[0].value,
         "percentageOfSuccess":e.target[1].value,
         "confidenceLevel": e.target[2].value,
-        "startDate": e.target[3].value,
-        "endDate": e.target[4].value,
-        "goalOwnerId":selectedValue,
-        "teamId": team.id,
-        cycleId : 1
+        "description": e.target[3].value,
+        "ownerId":selectedOwner,
+        "goalId": goal.id
       };
-    const response = await fetch("https://localhost:44344/api/GoalMaker/NewGoal",{
+    const response = await fetch("https://localhost:44344/api/GoalMaker/NewKeyResult",{
         method: "POST", 
-        body : JSON.stringify(newGoal),
+        body : JSON.stringify(newKeyResult),
         headers: {
             'Content-type': 'application/json'
         }
@@ -42,53 +40,52 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
     console.log(response);
     
     const response1 =
-       await fetch("https://localhost:5001/api/GoalMaker/GetTeamGoals?teamId="+team.id)  
+       await fetch("https://localhost:5001/api/GoalMaker/GetGoalKeyResults?goalId="+goal.id)  
       const data1 = await response1.json() ; 
-      setGoals(data1) ;
+      setKeyResults(data1) ;
       console.log(data1); 
   }  
 
   return (
     <div class="container">
-    <header>New Goal</header>
+    <header>New Key Result</header>
 
     <form action="#" onSubmit={(e)=>onSubmit(e)}>
         <div class="form first">
             
             <div class="details ID">
-                <span class="title">Goal Details</span>
+                <span class="title">Key Result Details</span>
 
                 <div class="fields">
                     <div class="input-field">
-                        <label>Goal Name</label>
-                        <input type="text" placeholder='Goal name' required></input>
+                        <label>Key Result Name</label>
+                        <input type="text" placeholder='Key result name' required></input>
                     </div>
 
                     <div class="input-field">
-                        <label>Percentage of success (evaluated)</label>
-                        <input type="text" defaultValue={0} disabled></input>
+                        <label>Percentage of success</label>
+                        <input type="number" placeholder='from 0 to 100%' required></input>
                     </div>
 
                     <div class="input-field">
-                        <label>Confidence level (evaluated)</label>
-                        <input type="text" defaultValue={0} disabled></input>
+                        <label>Confidence level</label>
+                        <input type="number" placeholder='from 0 to 10' required ></input>
                     </div>
 
-                    <div class="input-field">
-                        <label>Start Date</label>
-                        <input type="date" placeholder="Enter start date" required></input>
-                    </div>
 
                     <div class="input-field">
-                        <label>End Date</label>
-                        <input type="date" placeholder="Enter end date" required></input>
+                        <label>Description</label>
+                        <input type="text" placeholder='Key result description' required></input>
                     </div>
 
                     {employees && 
                         <div class="input-field">
                         <label>Goal Owner</label>
                         <select required 
-                            onChange={(e)=>setSelectedValue(e.target.value)}>
+                            onChange={(e)=>{
+                                setSelectedOwner(e.target.value)
+                                console.log(e.target.value)
+                            }}>
                             <option disabled selected>Select owner</option>
                             {employees.map((employee, index)=>(
                                 <option key={index} value={employee.id}>
@@ -114,4 +111,4 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
   )
 }
 
-export default NewGoalForm ;
+export default NewKeyResultForm ;

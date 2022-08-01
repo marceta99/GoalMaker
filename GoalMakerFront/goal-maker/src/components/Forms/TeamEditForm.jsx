@@ -3,7 +3,8 @@ import "./TeamEditForm.css";
 import Select from 'react-select';
 import { useEffect, useState } from 'react';
 
-const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) => {
+const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, 
+    teamEmployees,setTeamEmployees}) => {
     const [employees, setEmployees] = useState(); 
     const [options, setOptions] = useState(); 
     const [selectedValue, setSelectedValue] = useState(); 
@@ -12,7 +13,9 @@ const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) 
 
     useEffect(()=>{
         const trenutniClanoviTima = teamEmployees.map((item)=>{
+            //if(teamOwner.id !== item.id){
             return {value : item.id, label : item.firstName+ " "+ item.lastName}
+            //}
         })
         setSelectedMembers(trenutniClanoviTima);
 
@@ -24,8 +27,10 @@ const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) 
             console.log(data1);
            
             let opcije = data1.map((item)=>{
-                return {value : item.id, label : item.firstName + " " +item.lastName}
+            return {value : item.id, label : item.firstName + " " +item.lastName}    
             } )
+            
+            //const opcijeKopija = opcije.filter(o=> o.value !== teamOwner.id); 
             setOptions(opcije) ;
             console.log(team); 
             }
@@ -35,10 +40,25 @@ const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) 
   const onSubmit = async (e)=>{
     setActiveForm(false); 
 
-    const deleteResponse = await fetch("https://localhost:44344/api/GoalMaker/DeleteMembersFromTeam?teamId="+team.id,{
+    const deleteResponse = await fetch("https://localhost:5001/api/GoalMaker/DeleteMembersFromTeam?teamId="+team.id,{
         method: "DELETE", 
     })
      console.log(deleteResponse); 
+
+     const idArray = [] ; 
+      selectedMembers.forEach(selected => {
+        idArray.push(selected.value); 
+      }); 
+      const response3 = await fetch("https://localhost:44344/api/GoalMaker/AddMembersToTeam?teamId="+team.id,{
+        method: "POST", 
+        body : JSON.stringify(idArray),
+        headers: {
+            'Content-type': 'application/json'
+        }
+    })
+    console.log(response3); 
+
+
 
     console.log(e); 
     const updatedTeam = {
@@ -61,19 +81,14 @@ const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) 
       const data2 = await response2.json() ; 
       setTeam(data2) ;
 
-      const idArray = [] ; 
-      selectedMembers.forEach(selected => {
-        idArray.push(selected.value); 
-      }); 
-      const response3 = await fetch("https://localhost:44344/api/GoalMaker/AddMembersToTeam?teamId="+team.id,{
-        method: "POST", 
-        body : JSON.stringify(idArray),
-        headers: {
-            'Content-type': 'application/json'
-        }
-    })
-    console.log(response3); 
-    
+
+
+    const response4 =
+       await fetch("https://localhost:5001/api/GoalMaker/GetTeamMembers?teamId="+team.id)  
+      const data4 = await response4.json() ; 
+      setTeamEmployees(data4) ;
+      console.log(data4); 
+
 
   }  
 
@@ -112,7 +127,9 @@ const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) 
                         <div class="input-field">
                         <label>Team Owner</label>
                         <select required 
-                            onChange={(e)=>setSelectedValue(e.target.value)}>
+                            onChange={(e)=>{
+                                setSelectedValue(e.target.value); 
+                            }}>
                             <option value={teamOwner.id}>{teamOwner.firstName+" "+teamOwner.lastName }</option>
                             {employees.map((employee, index)=>(
                                 <option key={index} value={employee.id} >
@@ -129,6 +146,7 @@ const TeamEditForm = ({team, setActiveForm, setTeam, teamOwner, teamEmployees}) 
                             value={selectedMembers}
                             onChange={(selectedOptions)=>{
                                 setSelectedMembers(selectedOptions);
+                                console.log("selektovani memberi"); 
                                 console.log(selectedOptions);
                             }}
                             options={options}
