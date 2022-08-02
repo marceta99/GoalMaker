@@ -2,7 +2,7 @@ const gridInitiativeOwner = (props) => (
     <div className="flex items-center gap-2">
       <img
         className="rounded-full w-10 h-10"
-        src="https://picsum.photos/200/300?random=5"
+        src={"https://picsum.photos/200/300?random="+Math.floor(Math.random()*10)}
         alt="team"
       />
       <p>{props.owner.firstName}</p>

@@ -573,6 +573,34 @@ namespace GoalMakerServer.Controllers
 
         }
 
+        [HttpPut]
+        [Route("ChangeKeyResult/{keyResultId}")]
+        public async Task<ActionResult> ChangeKeyResult([FromRoute] int keyResultId, [FromBody] KeyResultDTO keyResultDTO)
+       {
+            if (!ModelState.IsValid) return BadRequest("bad request");
+
+            var keyResult = _context.KeyResults.FirstOrDefault(k => k.Id == keyResultId);
+
+            if (keyResult == null) return NotFound("keyResult with that id doesn't exists");
+
+            keyResult.Name = keyResultDTO.Name;
+            keyResult.PercentageOfSuccess = keyResultDTO.PercentageOfSuccess;
+            keyResult.ConfidenceLevel = keyResultDTO.ConfidenceLevel;
+            keyResult.Description = keyResultDTO.Description;
+            keyResult.OwnerId = keyResultDTO.OwnerId;
+            //keyResult.GoalId = keyResultDTO.GoalId; nema mi logike da keyResult moze da promeni goal 
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return Ok("keyResult updated");
+            }
+            return BadRequest("problem with updating keyResult ");
+
+        }
+
+
         [HttpPut("UpdateInitiative")]
         public async Task<ActionResult> UpdateInitiative([FromQuery] int initiativeId,[FromBody] InitiativeDTO initiativeDTO)
         {

@@ -68,7 +68,7 @@ const KeyResults = () => {
         <div style={{display : "flex"}}>
         <CircularBar percentage={goal.percentageOfSuccess}/>
         </div>
-        <Header category={goal.team.name} title={goal.name} />
+        <Header category={goal.team.name} title={"Goal-"+goal.name} />
         <button class="nextBtn dugme" onClick={()=>setActiveNewKeyResult(true)}>
                       <span class="btnText">New Key Result</span>
                       <i class="uil uil-navigator"></i>
