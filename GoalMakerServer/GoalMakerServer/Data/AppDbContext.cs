@@ -21,6 +21,8 @@ namespace GoalMakerServer.Data
         public DbSet<KeyResult> KeyResults { get; set; }
         public DbSet<Initiative> Initiatives { get; set; }
         public DbSet<Cycle> Cycles { get; set; }
+        public DbSet<Milestone> Milestones { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

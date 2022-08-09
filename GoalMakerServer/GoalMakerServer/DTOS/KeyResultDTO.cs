@@ -11,7 +11,7 @@ namespace GoalMakerServer.DTOS
         public int PercentageOfSuccess { get; set; }
         public int ConfidenceLevel { get; set; }
         public string Description { get; set; }
-
+        public int Type { get; set; }
         public int OwnerId { get; set; }
 
         public int GoalId { get; set; }

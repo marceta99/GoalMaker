@@ -4,14 +4,16 @@ using GoalMakerServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GoalMakerServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220809135726_TypeOfKeyResult")]
+    partial class TypeOfKeyResult
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,29 +164,6 @@ namespace GoalMakerServer.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("KeyResults");
-                });
-
-            modelBuilder.Entity("GoalMakerServer.Entities.Milestone", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<bool>("IsResolved")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("KeyResultId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KeyResultId");
-
-                    b.ToTable("Milestones");
                 });
 
             modelBuilder.Entity("GoalMakerServer.Entities.Organization", b =>
@@ -352,17 +331,6 @@ namespace GoalMakerServer.Migrations
                     b.Navigation("Goal");
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("GoalMakerServer.Entities.Milestone", b =>
-                {
-                    b.HasOne("GoalMakerServer.Entities.KeyResult", "KeyResult")
-                        .WithMany()
-                        .HasForeignKey("KeyResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("KeyResult");
                 });
 
             modelBuilder.Entity("GoalMakerServer.Entities.Team", b =>

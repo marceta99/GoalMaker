@@ -10,7 +10,8 @@ const Login = () => {
 
   return (
     <div  className="body">
-        <div class="container">
+      <div style={{display:"flex"}}>
+      <div class="container">
     <input type="checkbox" id="flip"></input>
     <div class="cover">
       <div class="front">
@@ -72,7 +73,8 @@ const Login = () => {
     </div>
     </div>
     </div>
-  </div>
+      </div>
+      </div>
     </div>
   )
 }

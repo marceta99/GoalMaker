@@ -1,11 +1,26 @@
-
+.mileStone:hover{
+    background-color: gray;
+}
+.buttonContainer{
+    display : flex ; 
+    flex-direction: row-reverse;
+    
+}
+.keyResultType{
+    
+    background-color: #265df2;
+    border-radius: 6%;
+    margin: 5px;
+    color: white;
+    padding: 10px;
+}
 .container{
     position: relative;
     max-width: 900px ; 
     width: 100%;
     border-radius: 6px;
     padding: 30px;
-    margin: 0 15px;
+    margin: 20px; 
     background-color: #fff;
     box-shadow: 0 5px 10px rgba(0,0,0,0.1);
 }

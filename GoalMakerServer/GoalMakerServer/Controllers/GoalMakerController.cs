@@ -218,6 +218,18 @@ namespace GoalMakerServer.Controllers
             return Ok(initiatives);
         }
 
+        [HttpGet("GetKeyResultMilestones")]
+        public async Task<ActionResult<List<Milestone>>> GetKeyResultMilestones([FromQuery] int keyResultId)
+        {
+            var milestones = await _context.Milestones
+                .Where( m => m.KeyResultId == keyResultId)
+                .ToListAsync();
+
+            if (milestones == null) return NotFound("there is no milestones for that keyResult");
+
+            return Ok(milestones);
+        }
+
         [HttpGet("GetInitiative")]
         public ActionResult<Initiative> GetInitiative([FromQuery] int initiativeId)
         {
@@ -382,7 +394,8 @@ namespace GoalMakerServer.Controllers
                 DateCreated = DateTime.Now,
                 Description = keyResultDTO.Description,
                 OwnerId = keyResultDTO.OwnerId, 
-                GoalId = keyResultDTO.GoalId
+                GoalId = keyResultDTO.GoalId,
+                Type = keyResultDTO.Type
             };
 
             _context.KeyResults.Add(kr);
@@ -392,7 +405,7 @@ namespace GoalMakerServer.Controllers
             if (result > 0)
             {
                 var lastId = _context.KeyResults.Max(g => g.Id);
-                return Created("~api/GoalMaker/GetKeyResult?keyResultId=" + lastId, kr);
+                return Ok(lastId);
             }
             return BadRequest("problem with creating new keyResult ");
         }
@@ -424,6 +437,34 @@ namespace GoalMakerServer.Controllers
                 return Created("~api/GoalMaker/GetInitiative?initiativeId=" + lastId, i);
             }
             return BadRequest("problem with creating new initiative ");
+        }
+
+        [HttpPost("NewMilestone")]
+        public async Task<ActionResult> NewMilestone([FromBody] MilestoneDTO milestoneDTO)
+        {
+            /*var keyResult = _context.KeyResults.FirstOrDefault(k => k.Id == milestoneDTO.KeyResultId);
+
+            if (keyResult == null) return NotFound("Key result with that id doesn't exists");
+            if (keyResult.Type != 1) return BadRequest("You cannot add milestone to key result who doesn't support milestones");
+            */
+            if (milestoneDTO == null) return BadRequest("bad request");
+
+            Milestone m = new Milestone
+            {
+                Name = milestoneDTO.Name, 
+                IsResolved = milestoneDTO.IsResolved, 
+                KeyResultId = milestoneDTO.KeyResultId
+            };
+
+            _context.Milestones.Add(m);
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return Ok();
+            }
+            return BadRequest("problem with creating new milestone ");
         }
 
         //OSTALO JE DA ZA CYCLE DODAM POST, odnosno da se kreira ciklus ali o tome cu jos da popricam sa stefijem 

@@ -14,6 +14,8 @@ namespace GoalMakerServer.Entities
         public int ConfidenceLevel { get; set; }
         public DateTime DateCreated { get; set; }
         public string Description { get; set; }
+        public int Type { get; set; } //0 numeric, 1 mileStone , 2 binary
+        
 
         public List<Initiative> Initiatives { get; set; }
 

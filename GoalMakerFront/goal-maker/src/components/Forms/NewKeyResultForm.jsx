@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./TeamEditForm.css"; 
+import { ListBoxComponent } from '@syncfusion/ej2-react-dropdowns';
+import {BsPlusLg} from "react-icons/bs"; 
+import {AiOutlineCheck} from "react-icons/ai"; 
+
 
 const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
 
   const [employees, setEmployees] = useState(); 
   const [selectedOwner, setSelectedOwner] = useState(); 
+  const [chosenType, setChosenType] = useState(0) ; 
+  const [numberOfMileStones, setNumOfMileStones] = useState(1);
+  const [isMileStone, setIsMileStone] = useState(false) ; 
+  const types = [{value : 0 , name : "numeric"},{value : 1 , name : "milestones"},{value : 2 , name : "binary"}]
+  const [mileStones, setMileStones] = useState([]); 
+  const stones = [] ;
+  const inputRef = useRef(); 
 
   useEffect(()=>{
     const getData = async()=>{
@@ -24,11 +35,12 @@ const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
 
     const newKeyResult = {
         "name": e.target[0].value,
-        "percentageOfSuccess":e.target[1].value,
+        "percentageOfSuccess":0,
         "confidenceLevel": e.target[2].value,
         "description": e.target[3].value,
         "ownerId":selectedOwner,
-        "goalId": goal.id
+        "goalId": goal.id,
+        "type":chosenType
       };
     const response = await fetch("https://localhost:44344/api/GoalMaker/NewKeyResult",{
         method: "POST", 
@@ -38,14 +50,50 @@ const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
         }
     })
     console.log(response);
+    const keyResultId = await response.json(); 
     
     const response1 =
        await fetch("https://localhost:5001/api/GoalMaker/GetGoalKeyResults?goalId="+goal.id)  
       const data1 = await response1.json() ; 
       setKeyResults(data1) ;
       console.log(data1); 
+
+     
+    if(isMileStone){
+        for(let m of mileStones){
+            m.keyResultId = keyResultId; 
+    
+            const response3 = await fetch("https://localhost:44344/api/GoalMaker/NewMilestone",{
+            method: "POST", 
+            body : JSON.stringify(m),
+            headers: {
+                'Content-type': 'application/json'
+            }
+        })
+        console.log(response3); 
+    }
+    
+    }
+    
+      
   }  
 
+  const onTypeChange = (value)=>{
+    setChosenType(value); 
+    console.log(value)
+
+    if(value ==1){
+        setNumOfMileStones(1);
+        setMileStones([]);
+        setIsMileStone(true);
+    } 
+    else {
+        setIsMileStone(false); 
+        setNumOfMileStones(0); 
+        setMileStones([]);
+    }
+  }
+    
   return (
     <div class="container">
     <header>New Key Result</header>
@@ -95,7 +143,47 @@ const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
                         </select>
                     </div>
                     }
-                   
+
+                    <div class="input-field">
+                        <label>Key Result Type</label>
+                        <select required 
+                            onChange={(e)=>{
+                                onTypeChange(e.target.value); 
+                            }}>
+                            <option disabled selected>Select type</option>
+                            {types.map((type, index)=>(
+                                <option key={index} value={type.value}>
+                                    {type.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    {isMileStone && 
+                    <>
+                    <div class="input-field" >
+                        <label>MileStone Name</label>
+                        <div style={{display:"flex", flexDirection:"row", alignItems:"center"}}>
+                        <input type="text" placeholder='name' required ref={inputRef}>
+                        </input>
+                        <BsPlusLg color='green' fontSize={20} onClick={()=>{
+                             
+                             const newStone = {
+                                name: inputRef.current.value,
+                                "isResolved": false
+                            };
+                             setMileStones(previous => [...previous, newStone]);   
+                             inputRef.current.value = "";   
+                        }}/>
+                        </div>
+                        <span>MileStones: </span>
+                    </div>  
+                    </>    
+                    }
+                    {mileStones.map((e,i)=>(
+                        <div className = "e-card mileStone" key={i}>
+                            {e.name}
+                        </div>
+                    ))}
                 </div>
 
                 <button class="nextBtn">
