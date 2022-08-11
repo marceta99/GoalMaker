@@ -66,7 +66,7 @@ const KeyResults = () => {
       <div className="myContainer">
         <div className='left'>
         <div style={{display : "flex"}}>
-        <CircularBar percentage={goal.percentageOfSuccess}/>
+        <CircularBar percentage={Math.round(goal.percentageOfSuccess)}/>
         </div>
         <Header category={goal.team.name} title={"Goal-"+goal.name} />
         <button class="nextBtn dugme" onClick={()=>setActiveNewKeyResult(true)}>

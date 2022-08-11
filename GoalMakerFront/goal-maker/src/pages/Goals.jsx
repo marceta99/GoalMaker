@@ -74,7 +74,7 @@ const Goals = () => {
       <div className="myContainer">
         <div className='left'>
           <div style={{display : "flex"}}>
-          <CircularBar percentage={team.percentageOfSuccess}/>
+          <CircularBar percentage={Math.round(team.percentageOfSuccess)}/>
           </div>
         <Header category={team.organization.name} title={team.name} />
 

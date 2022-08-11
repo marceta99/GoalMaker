@@ -10,7 +10,7 @@ namespace GoalMakerServer.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int PercentageOfSuccess { get; set; }
+        public double PercentageOfSuccess { get; set; }
         public int ConfidenceLevel { get; set; }
         public DateTime DateCreated { get; set; }
         public string Description { get; set; }

@@ -12,7 +12,7 @@ const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
   const [chosenType, setChosenType] = useState(0) ; 
   const [numberOfMileStones, setNumOfMileStones] = useState(1);
   const [isMileStone, setIsMileStone] = useState(false) ; 
-  const types = [{value : 0 , name : "numeric"},{value : 1 , name : "milestones"},{value : 2 , name : "binary"}]
+  const types = [{value : 0 , name : "percentage"},{value : 1 , name : "milestones"},{value : 2 , name : "binary"}]
   const [mileStones, setMileStones] = useState([]); 
   const stones = [] ;
   const inputRef = useRef(); 
@@ -36,7 +36,7 @@ const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
     const newKeyResult = {
         "name": e.target[0].value,
         "percentageOfSuccess":0,
-        "confidenceLevel": e.target[2].value,
+        "confidenceLevel": 10,
         "description": e.target[3].value,
         "ownerId":selectedOwner,
         "goalId": goal.id,
@@ -112,12 +112,12 @@ const NewKeyResultForm = ({goal, setActiveNewKeyResult,setKeyResults}) => {
 
                     <div class="input-field">
                         <label>Percentage of success</label>
-                        <input type="number" placeholder='from 0 to 100%' required></input>
+                        <input type="number" placeholder='0%' required disabled></input>
                     </div>
 
                     <div class="input-field">
                         <label>Confidence level</label>
-                        <input type="number" placeholder='from 0 to 10' required ></input>
+                        <input type="number" placeholder='from 0 to 10' required disabled ></input>
                     </div>
 
 

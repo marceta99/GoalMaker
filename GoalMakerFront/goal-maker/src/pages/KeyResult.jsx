@@ -54,7 +54,7 @@ useEffect(()=>{
         <div className="myContainer">
         <div className='left'>
         <div style={{display : "flex"}}>
-        <CircularBar percentage={keyResult.percentageOfSuccess}/>
+        <CircularBar percentage={Math.round(keyResult.percentageOfSuccess)}/>
         </div>
         <Header category="Key Result : " title={keyResult.name} />
         <button class="nextBtn dugme" onClick={()=>setActiveNewInitiative(true)}>

@@ -217,18 +217,18 @@ namespace GoalMakerServer.Controllers
 
             return Ok(initiatives);
         }
-
         [HttpGet("GetKeyResultMilestones")]
-        public async Task<ActionResult<List<Milestone>>> GetKeyResultMilestones([FromQuery] int keyResultId)
+        public async Task<ActionResult<List<Goal>>> GetKeyResultMilestones([FromQuery] int keyResultId)
         {
             var milestones = await _context.Milestones
-                .Where( m => m.KeyResultId == keyResultId)
+                .Where(m => m.KeyResultId == keyResultId)
                 .ToListAsync();
 
             if (milestones == null) return NotFound("there is no milestones for that keyResult");
 
             return Ok(milestones);
         }
+
 
         [HttpGet("GetInitiative")]
         public ActionResult<Initiative> GetInitiative([FromQuery] int initiativeId)
@@ -603,6 +603,27 @@ namespace GoalMakerServer.Controllers
             keyResult.Description = keyResultDTO.Description;
             keyResult.OwnerId = keyResultDTO.OwnerId;
             //keyResult.GoalId = keyResultDTO.GoalId; nema mi logike da keyResult moze da promeni goal 
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return Ok("keyResult updated");
+            }
+            return BadRequest("problem with updating keyResult ");
+
+        }
+
+        [HttpPut("ResolveMilestone")]
+        public async Task<ActionResult> ResolveMilestone([FromBody] Milestone milestone)
+        {
+            if (!ModelState.IsValid) return BadRequest("bad request");
+
+            var m = _context.Milestones.FirstOrDefault(m => m.Id == milestone.Id);
+
+            if (m == null) return NotFound("milestone with that id doesn't exists");
+
+            m.IsResolved = milestone.IsResolved; 
 
             var result = await _context.SaveChangesAsync();
 
