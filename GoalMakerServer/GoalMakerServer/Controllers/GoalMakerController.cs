@@ -608,9 +608,67 @@ namespace GoalMakerServer.Controllers
 
             if (result > 0)
             {
+                await UpdateGoalPercentages(keyResult.GoalId); 
+
                 return Ok("keyResult updated");
             }
             return BadRequest("problem with updating keyResult ");
+
+        }
+
+        private async Task UpdateGoalPercentages(int goalId)
+        {
+            var goal = _context.Goals.FirstOrDefault(g => g.Id == goalId);
+
+            if (goal == null) return;
+
+            var goalKeyResults = await _context.KeyResults.Where(k => k.GoalId == goal.Id).ToListAsync();
+
+            
+            double countKeyResults = goalKeyResults.Count;
+            double maximumPercentage = countKeyResults * 100; //number of key results * 100% it is maximum percentage
+            double achivedKeyResultPercentage = 0; 
+
+            foreach (var k in goalKeyResults)
+            {
+                achivedKeyResultPercentage += k.PercentageOfSuccess; 
+            }
+
+            double goalPercentage = (achivedKeyResultPercentage / maximumPercentage) * 100;
+
+            goal.PercentageOfSuccess = goalPercentage;
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                await UpdateTeamPercentage(goal.TeamId); 
+            }
+
+            }
+
+        private async Task UpdateTeamPercentage(int teamId)
+        {
+            var team = _context.Teams.FirstOrDefault(t => t.Id == teamId);
+
+            if (team == null) return;
+
+            var teamGoals =  await _context.Goals.Where(g => g.TeamId == team.Id).ToListAsync();
+
+            double goalsCount = teamGoals.Count;
+            double maximumPercentage = goalsCount * 100;
+            double achivedGoalsPercentage = 0; 
+
+            foreach(var g in teamGoals)
+            {
+                achivedGoalsPercentage += g.PercentageOfSuccess; 
+            }
+
+            double teamPercentage = (achivedGoalsPercentage / maximumPercentage) * 100;
+
+            team.PercentageOfSuccess = teamPercentage;
+
+            var result = await _context.SaveChangesAsync();
 
         }
 

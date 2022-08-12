@@ -21,7 +21,7 @@ const Login = () => {
       <div class="back">
         <img class="backImg" src="https://fellow.app/wp-content/uploads/2020/10/Types-Company-Culture.jpg" alt=""></img>
         <div class="text">
-          <span class="text-1">Complete miles of journey <br></br> with one step</span>
+          <span  class="text-1">Complete miles of journey <br></br> with one step</span>
           <span class="text-2">Let's get started</span>
         </div>
       </div>

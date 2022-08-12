@@ -25,7 +25,10 @@ const Goals = () => {
     const getData = async()=>{
       const response1 =
        await fetch("https://localhost:5001/api/GoalMaker/GetTeamGoals?teamId="+teamId)  
-      const data1 = await response1.json() ; 
+      const data1 = await response1.json() ;
+      data1.forEach(g => {
+          g.percentageOfSuccess = Math.round(g.percentageOfSuccess);
+      }); 
       setGoals(data1) ;
       console.log(data1); 
 

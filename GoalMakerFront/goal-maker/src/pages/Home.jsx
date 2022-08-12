@@ -21,6 +21,9 @@ const Home = () => {
       const response2 = await 
           fetch("https://localhost:5001/api/GoalMaker/GetOrganizationTeamsWithId?organizationId=1")
       const data2 = await response2.json() ;
+      data2.forEach(team => {
+        team.percentageOfSuccess = Math.round(team.percentageOfSuccess); 
+      });
       setTeams(data2) ; 
       console.log(data2);  
       }

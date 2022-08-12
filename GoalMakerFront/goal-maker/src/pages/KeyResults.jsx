@@ -26,6 +26,9 @@ const KeyResults = () => {
         const response1 =
          await fetch("https://localhost:5001/api/GoalMaker/GetGoalKeyResults?goalId="+goalId);  
         const data1 = await response1.json() ; 
+        data1.forEach(kr => {
+          kr.percentageOfSuccess = Math.round(kr.percentageOfSuccess); 
+        });
         setKeyResults(data1) ;
         console.log(data1); 
 
