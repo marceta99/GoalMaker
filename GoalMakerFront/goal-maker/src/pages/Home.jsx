@@ -47,7 +47,7 @@ const Home = () => {
     <div>
 
     {organization && 
-    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
+    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl" style={{boxShadow:"5px 5px 5px 5px #6b8ce6"}}>
     <button class="nextBtn dugme" onClick={()=>setActiveNewTeam(true)}>
             <span class="btnText">New Team</span>
             <i class="uil uil-navigator"></i>

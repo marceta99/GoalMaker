@@ -4,14 +4,16 @@ using GoalMakerServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GoalMakerServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220813003916_OrganizationalKeyResults")]
+    partial class OrganizationalKeyResults
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -297,66 +299,6 @@ namespace GoalMakerServer.Migrations
                     b.ToTable("OrganizationalKeyResults");
                 });
 
-            modelBuilder.Entity("GoalMakerServer.Entities.OrganizationalMilestone", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<bool>("IsResolved")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrganizationalKeyResultId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationalKeyResultId");
-
-                    b.ToTable("OrganizationalMilestones");
-                });
-
-            modelBuilder.Entity("GoalMakerServer.Entities.Organizationalnitiative", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InitiativeState")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrganizationalKeyResultId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OwnerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationalKeyResultId");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("Organizationalnitiatives");
-                });
-
             modelBuilder.Entity("GoalMakerServer.Entities.Team", b =>
                 {
                     b.Property<int>("Id")
@@ -577,36 +519,6 @@ namespace GoalMakerServer.Migrations
                         .IsRequired();
 
                     b.Navigation("OrganizationalGoal");
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("GoalMakerServer.Entities.OrganizationalMilestone", b =>
-                {
-                    b.HasOne("GoalMakerServer.Entities.OrganizationalKeyResult", "OrganizationalKeyResult")
-                        .WithMany()
-                        .HasForeignKey("OrganizationalKeyResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrganizationalKeyResult");
-                });
-
-            modelBuilder.Entity("GoalMakerServer.Entities.Organizationalnitiative", b =>
-                {
-                    b.HasOne("GoalMakerServer.Entities.OrganizationalKeyResult", "OrganizationalKeyResult")
-                        .WithMany()
-                        .HasForeignKey("OrganizationalKeyResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GoalMakerServer.Entities.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrganizationalKeyResult");
 
                     b.Navigation("Owner");
                 });

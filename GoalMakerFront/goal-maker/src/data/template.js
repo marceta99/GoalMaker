@@ -5,6 +5,9 @@ import { FiEdit, FiPieChart, FiShoppingBag } from 'react-icons/fi';
 import { GiLouvrePyramid } from 'react-icons/gi';
 import { GrLocation } from 'react-icons/gr';
 import { RiStockLine } from 'react-icons/ri';
+import {AiOutlineTeam} from "react-icons/ai" ; 
+import {GiStairsGoal} from "react-icons/gi" ; 
+import {GrOrganization} from "react-icons/gr";
 import ProgressBar from '../components/ProgressBar/ProgressBar';
 
 const gridTeamProfile = (props) => (
@@ -75,11 +78,18 @@ export const teamsGrid = [
       links: [
         {
           name: 'home',
-          icon: <FiShoppingBag />,
+          route: 'home',
+          icon: <GrOrganization />,
         },
         {
           name: 'my teams',
-          icon: <FiShoppingBag />,
+          route: 'myTeams',
+          icon: <AiOutlineTeam />,
+        },
+        {
+          name: 'organization goals',
+          route: 'organizationGoals',
+          icon: <GiStairsGoal />,
         },
       ],
     },
@@ -89,18 +99,22 @@ export const teamsGrid = [
       links: [
         {
           name: 'calendar',
+          route: 'calendar',
           icon: <AiOutlineCalendar />,
         },
         {
           name: 'kanban',
+          route: 'kanban',
           icon: <BsKanban />,
         },
         {
           name: 'editor',
+          route: 'editor',
           icon: <FiEdit />,
         },
         {
           name: 'color-picker',
+          route: 'colorPicker',
           icon: <BiColorFill />,
         },
       ],
@@ -110,35 +124,43 @@ export const teamsGrid = [
       links: [
         {
           name: 'line',
+          route: 'line',
           icon: <AiOutlineStock />,
         },
         {
           name: 'area',
+          route: 'area',
           icon: <AiOutlineAreaChart />,
         },
   
         {
           name: 'bar',
+          route: 'bar',
           icon: <AiOutlineBarChart />,
         },
         {
           name: 'pie',
+          route: 'pie',
           icon: <FiPieChart />,
         },
         {
           name: 'financial',
+          route: 'financial',
           icon: <RiStockLine />,
         },
         {
           name: 'color-mapping',
+          route: 'color-mapping',
           icon: <BsBarChart />,
         },
         {
           name: 'pyramid',
+          route: 'pyramid',
           icon: <GiLouvrePyramid/>,
         },
         {
           name: 'stacked',
+          route: 'stacked',
           icon: <AiOutlineBarChart />,
         },
       ],

@@ -8,6 +8,10 @@ import { Home, Goals} from './Index';
 import KeyResults from './KeyResults';
 import KeyResult from './KeyResult';
 import { useStateContext } from '../contexts/ContextProvider';
+import MyTeams from './MyTeams';
+import OrganizationGoals from './OrganizationGoals';
+import OrganizationKeyResults from './OrganizationKeyResults';
+import OrganizationKeyResult from './OrganizationKeyResult';
 
 const Welcome = () => {
     const {activeMenu} = useStateContext() ;  
@@ -37,11 +41,16 @@ const Welcome = () => {
                 {/* dashboard  */}
                 <Route path="/" element={(<Home />)} />
                 <Route path="/home" element={(<Home />)} />
+                <Route path="/myTeams" element={(<MyTeams />)} />
+                <Route path="/organizationGoals" element={(<OrganizationGoals />)} />
+
 
                 {/* pages  */}
                 <Route path="/team/:teamId" element={<Goals />} />
                 <Route path="/goal/:goalId" element={<KeyResults />} />
+                <Route path="/organizationGoal/:goalId" element={<OrganizationKeyResults />} />
                 <Route path="/keyResult/:keyResultId" element={<KeyResult />} />
+                <Route path="/organizationKeyResult/:keyResultId" element={<OrganizationKeyResult />} />
 
 
                 {/* apps  */}

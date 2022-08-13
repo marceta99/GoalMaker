@@ -6,28 +6,22 @@ using System.Threading.Tasks;
 
 namespace GoalMakerServer.Entities
 {
-    public class Goal
+    public class OrganizationalKeyResult
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public double PercentageOfSuccess { get; set; }
         public int ConfidenceLevel { get; set; }
         public DateTime DateCreated { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public string Description { get; set; }
+        public int Type { get; set; } //0 numeric, 1 mileStone , 2 binary
 
+
+        public List<Initiative> Initiatives { get; set; }
 
         [ForeignKey("User")]
-        public int GoalOwnerId { get; set; }
-        public User GoalOwner { get; set; }
-        
-        [ForeignKey("Team")]
-        public int TeamId { get; set; }
-        public Team Team { get; set; }
-
-        [ForeignKey("Cycle")]
-        public int CycleId { get; set; }
-        public Cycle Cycle { get; set; }
+        public int OwnerId { get; set; }
+        public User Owner { get; set; }
 
         [ForeignKey("OrganizationalGoal")]
         public int OrganizationalGoalId { get; set; }

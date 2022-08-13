@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 
 namespace GoalMakerServer.Entities
 {
-    public class Milestone
+    public class OrganizationalMilestone
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsResolved { get; set; }
 
-        [ForeignKey("KeyResult")]
-        public int KeyResultId { get; set; }
-        public KeyResult KeyResult { get; set; }
-
+        [ForeignKey("OrganizationalKeyResult")]
+        public int OrganizationalKeyResultId { get; set; }
+        public OrganizationalKeyResult OrganizationalKeyResult { get; set; }
     }
 }

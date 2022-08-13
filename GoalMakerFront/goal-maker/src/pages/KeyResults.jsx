@@ -64,7 +64,7 @@ const KeyResults = () => {
                               setKeyResults={setKeyResults}/>
 
   return (
-    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
+    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl" style={{boxShadow:"4px 4px 4px 4px #6b8ce6"}}>
        {goal && 
       <div className="myContainer">
         <div className='left'>

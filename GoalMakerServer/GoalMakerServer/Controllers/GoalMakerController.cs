@@ -93,6 +93,28 @@ namespace GoalMakerServer.Controllers
             return Ok(teamsDto);
         }
 
+        [HttpGet("GetOrganizationLeadershipTeam")]
+        public  ActionResult<TeamDTO> GetOrganizationLeadershipTeam([FromQuery] int organizationId)
+        {
+            var t = _context.Teams.FirstOrDefault(t => t.Organization.Id == organizationId && t.IsLeadership == true); 
+              
+            if (t == null) return NotFound("there is no team for that organization id");
+
+            
+            TeamDTO tdo = new TeamDTO
+            {
+                Name = t.Name,
+                OrganizationId = t.OrganizationId,
+                TeamCountry = t.TeamCountry,
+                ConfidenceLevel = t.ConfidenceLevel,
+                PercentageOfSuccess = t.PercentageOfSuccess,
+                Id = t.Id
+            };
+            tdo.Owner = GetTeamOwnerPrivate(t.Id);
+               
+            return Ok(tdo);
+        }
+
         [HttpGet("GetOrganizationEmployees")]
         public async Task<ActionResult<List<UserDTO>>> GetOrganizationEmployees([FromQuery] int organizationId)
         {
@@ -168,11 +190,41 @@ namespace GoalMakerServer.Controllers
             return Ok(goals);
         }
 
+        [HttpGet("GetOrganizationalTeamGoals")]
+        public async Task<ActionResult<List<Goal>>> GetOrganizationalTeamGoals([FromQuery] int leadershipTeamId)
+        {
+            var leadershipTeam = _context.Teams.FirstOrDefault(t => t.Id == leadershipTeamId && t.IsLeadership == true);
+
+            if (leadershipTeam == null) return BadRequest("that team is not leadership team"); 
+
+            var goals = await _context.OrganizationalGoals
+                .Where(g => g.LeadershipTeamId == leadershipTeamId)
+                .Include(g => g.Cycle)
+                .Include(g => g.GoalOwner)
+                .ToListAsync();
+
+            if (goals == null) return NotFound("there is no goals for that team ");
+
+            return Ok(goals);
+        }
+
         [HttpGet("GetGoal")]
         public ActionResult<Goal> GetGoal([FromQuery] int goalId)
         {
             var goal = _context.Goals
                 .Include(g => g.Team)
+                .FirstOrDefault(g => g.Id == goalId);
+
+            if (goal == null) return NotFound("there is no goal for that goal id");
+
+            return Ok(goal);
+        }
+
+        [HttpGet("GetOrganizationalGoal")]
+        public ActionResult<OrganizationalGoal> GetOrganizationalGoal([FromQuery] int goalId)
+        {
+            var goal = _context.OrganizationalGoals
+                .Include(g => g.LeadershipTeam)
                 .FirstOrDefault(g => g.Id == goalId);
 
             if (goal == null) return NotFound("there is no goal for that goal id");
@@ -193,11 +245,36 @@ namespace GoalMakerServer.Controllers
             return Ok(keyResults);
         }
 
+        [HttpGet("GetOrganizationalGoalKeyResults")]
+        public async Task<ActionResult<List<Goal>>> GetOrganizationalGoalKeyResults([FromQuery] int goalId)
+        {
+            var keyResults = await _context.OrganizationalKeyResults
+                .Where(kr => kr.OrganizationalGoalId == goalId)
+                .Include(kr => kr.Owner)
+                .ToListAsync();
+
+            if (keyResults == null) return NotFound("there is no keyResults for that goal");
+
+            return Ok(keyResults);
+        }
+
         [HttpGet("GetKeyResult")]
         public ActionResult<KeyResult> GetKeyResult([FromQuery] int keyResultId)
         {
             var keyResult = _context.KeyResults
                 .Include(k => k.Goal)
+                .FirstOrDefault(k => k.Id == keyResultId);
+
+            if (keyResult == null) return NotFound("there is no keyResult for that keyResult id");
+
+            return Ok(keyResult);
+        }
+
+        [HttpGet("GetOrganizationalKeyResult")]
+        public ActionResult<KeyResult> GetOrganizationalKeyResult([FromQuery] int keyResultId)
+        {
+            var keyResult = _context.OrganizationalKeyResults
+                .Include(k => k.OrganizationalGoal)
                 .FirstOrDefault(k => k.Id == keyResultId);
 
             if (keyResult == null) return NotFound("there is no keyResult for that keyResult id");
@@ -217,6 +294,20 @@ namespace GoalMakerServer.Controllers
 
             return Ok(initiatives);
         }
+
+        [HttpGet("GetOrganizationalKeyResultInitiatives")]
+        public async Task<ActionResult<List<Goal>>> GetOrganizationalKeyResultInitiatives([FromQuery] int keyResultId)
+        {
+            var initiatives = await _context.Organizationalnitiatives
+                .Where(i => i.OrganizationalKeyResultId == keyResultId)
+                .Include(i => i.Owner)
+                .ToListAsync();
+
+            if (initiatives == null) return NotFound("there is no initiatives for that keyResult");
+
+            return Ok(initiatives);
+        }
+
         [HttpGet("GetKeyResultMilestones")]
         public async Task<ActionResult<List<Goal>>> GetKeyResultMilestones([FromQuery] int keyResultId)
         {
@@ -229,6 +320,17 @@ namespace GoalMakerServer.Controllers
             return Ok(milestones);
         }
 
+        [HttpGet("GetOrganizationalKeyResultMilestones")]
+        public async Task<ActionResult<List<Goal>>> GetOrganizationalKeyResultMilestones([FromQuery] int keyResultId)
+        {
+            var milestones = await _context.OrganizationalMilestones
+                .Where(m => m.OrganizationalKeyResultId == keyResultId)
+                .ToListAsync();
+
+            if (milestones == null) return NotFound("there is no milestones for that keyResult");
+
+            return Ok(milestones);
+        }
 
         [HttpGet("GetInitiative")]
         public ActionResult<Initiative> GetInitiative([FromQuery] int initiativeId)
@@ -267,6 +369,65 @@ namespace GoalMakerServer.Controllers
             return Ok(teamMembers);
         }
 
+        [HttpGet("GetGoalsThatContributeToOrgGoal")]
+        public async Task<ActionResult<List<Goal>>> GetGoalsThatContributeToOrgGoal([FromQuery] int organizationGoalId)
+        {
+            var goals = await _context.Goals
+                .Where(g => g.OrganizationalGoalId == organizationGoalId)
+                .Include(g => g.Cycle)
+                .Include(g => g.GoalOwner)
+                .ToListAsync();
+
+            if (goals == null) return NotFound("there is no goals that contribue to that org goal");
+
+            return Ok(goals);
+        }
+
+        [HttpGet("GetTeamsThatContributeToOrgGoal")]
+        public async Task<ActionResult<List<TeamDTO>>> GetTeamsThatContributeToOrgGoal([FromQuery] int organizationGoalId)
+        {
+            var goals = await _context.Goals
+                .Where(g => g.OrganizationalGoalId == organizationGoalId)
+                .Include(g => g.Cycle)
+                .Include(g => g.GoalOwner)
+                .ToListAsync();
+
+            if (goals == null) return NotFound("there is no goals that contribue to that org goal");
+
+            List<TeamDTO> teams = new List<TeamDTO>(); 
+
+            foreach(var g in goals)
+            {
+                var t = _context.Teams.FirstOrDefault(t => t.Id == g.TeamId);
+
+                TeamDTO tdo = new TeamDTO
+                {
+                    Name = t.Name,
+                    OrganizationId = t.OrganizationId,
+                    TeamCountry = t.TeamCountry,
+                    ConfidenceLevel = t.ConfidenceLevel,
+                    PercentageOfSuccess = t.PercentageOfSuccess,
+                    Id = t.Id
+                };
+                tdo.Owner = GetTeamOwnerPrivate(t.Id);
+
+                if (TeamAlredyInList(teams, tdo) == false)
+                {
+                    teams.Add(tdo);
+                }
+                
+            }
+
+            return Ok(teams);
+        }
+        private bool TeamAlredyInList(List<TeamDTO> teams, TeamDTO team)
+        {
+            foreach(var t in teams)
+            {
+                if (t.Id == team.Id) return true; 
+            }
+            return false; 
+        }
 
         #endregion
 
@@ -296,9 +457,9 @@ namespace GoalMakerServer.Controllers
         {
             if (teamDTO == null) return BadRequest("bad request");
 
-            Team t = new Team { Name = teamDTO.Name, OrganizationId = organizationId, 
-                ConfidenceLevel = teamDTO.ConfidenceLevel, PercentageOfSuccess = teamDTO.PercentageOfSuccess ,
-                TeamCountry = teamDTO.TeamCountry};
+            Team t = new Team { Name = teamDTO.Name, OrganizationId = organizationId,
+                ConfidenceLevel = teamDTO.ConfidenceLevel, PercentageOfSuccess = teamDTO.PercentageOfSuccess,
+                TeamCountry = teamDTO.TeamCountry, IsLeadership = false };
 
             _context.Teams.Add(t);
             var result1 = await _context.SaveChangesAsync();
@@ -322,6 +483,45 @@ namespace GoalMakerServer.Controllers
 
             return BadRequest("problem with creating new team ");
         }
+
+        [HttpPost("NewLeadershipTeam")]
+        public async Task<ActionResult<TeamDTO>> NewLeadershipTeam([FromQuery] int organizationId, [FromBody] PPTeamDTO teamDTO)
+        {
+            if (teamDTO == null) return BadRequest("bad request");
+
+            Team t = new Team
+            {
+                Name = teamDTO.Name,
+                OrganizationId = organizationId,
+                ConfidenceLevel = teamDTO.ConfidenceLevel,
+                PercentageOfSuccess = teamDTO.PercentageOfSuccess,
+                TeamCountry = teamDTO.TeamCountry,
+                IsLeadership = true
+            };
+
+            _context.Teams.Add(t);
+            var result1 = await _context.SaveChangesAsync();
+
+            if (result1 > 0)
+            {
+                var lastId = _context.Teams.Max(t => t.Id);
+                TeamMember tm = new TeamMember { IsOwner = true, MemberId = teamDTO.OwnerId, TeamId = lastId };
+                _context.TeamsUsers.Add(tm);
+
+                var result = await _context.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    var last = _context.Teams.Max(t => t.Id);
+                    return Created("~api/GoalMaker/GetTeam?teamId=" + last, t);
+                }
+                return BadRequest("problem with creating new team ");
+
+            }
+
+            return BadRequest("problem with creating new team ");
+        }
+
 
         [HttpPost("AddMembersToTeam")]
         public async Task<ActionResult<TeamDTO>> AddMembersToTeam([FromQuery] int teamId, [FromBody] List<int> usersIds)
@@ -348,8 +548,6 @@ namespace GoalMakerServer.Controllers
             return BadRequest("problem with addint member to a team ");
 
         }
-
-
 
         [HttpPost("NewGoal")]
         public async Task<ActionResult<TeamDTO>> NewGoal([FromBody] GoalDTO goalDTO)
@@ -381,6 +579,40 @@ namespace GoalMakerServer.Controllers
             return BadRequest("problem with creating new goal ");
         }
 
+        [HttpPost("NewOrganizationalGoal")]
+        public async Task<ActionResult<TeamDTO>> NewOrganizationalGoal([FromBody] GoalDTO goalDTO)
+        {
+            if (goalDTO == null) return BadRequest("bad request");
+
+            var leadershipTeam = _context.Teams.FirstOrDefault(t => t.Id == goalDTO.TeamId && t.IsLeadership == true);
+
+            if (leadershipTeam == null) return BadRequest("this is not leadership team"); 
+
+            OrganizationalGoal g = new OrganizationalGoal
+            {
+                Name = goalDTO.Name,
+                PercentageOfSuccess = goalDTO.PercentageOfSuccess,
+                ConfidenceLevel = goalDTO.ConfidenceLevel,
+                DateCreated = DateTime.Now,
+                StartDate = goalDTO.StartDate,
+                EndDate = goalDTO.EndDate,
+                CycleId = goalDTO.CycleId,
+                LeadershipTeamId = goalDTO.TeamId,
+                GoalOwnerId = goalDTO.GoalOwnerId
+            };
+
+            _context.OrganizationalGoals.Add(g);
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                var lastId = _context.OrganizationalGoals.Max(g => g.Id);
+                return Ok("orgnanizational goal successfully created");
+            }
+            return BadRequest("problem with creating new organizational goal ");
+        }
+
         [HttpPost("NewKeyResult")]
         public async Task<ActionResult<KeyResultDTO>> NewKeyResult([FromBody] KeyResultDTO keyResultDTO)
         {
@@ -399,6 +631,40 @@ namespace GoalMakerServer.Controllers
             };
 
             _context.KeyResults.Add(kr);
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                var lastId = _context.KeyResults.Max(g => g.Id);
+                return Ok(lastId);
+            }
+            return BadRequest("problem with creating new keyResult ");
+        }
+
+        [HttpPost("NewOrganizationalKeyResult")]
+        public async Task<ActionResult<KeyResultDTO>> NewOrganizationalKeyResult([FromBody] KeyResultDTO keyResultDTO)
+        {
+            if (keyResultDTO == null) return BadRequest("bad request");
+
+            var organizationalGoal = _context.OrganizationalGoals
+                .FirstOrDefault(g => g.Id == keyResultDTO.GoalId);
+
+            if (organizationalGoal == null) return BadRequest("that organizational goals doesn't exists");
+
+            OrganizationalKeyResult kr = new OrganizationalKeyResult
+            {
+                Name = keyResultDTO.Name,
+                PercentageOfSuccess = keyResultDTO.PercentageOfSuccess,
+                ConfidenceLevel = keyResultDTO.ConfidenceLevel,
+                DateCreated = DateTime.Now,
+                Description = keyResultDTO.Description,
+                OwnerId = keyResultDTO.OwnerId,
+                OrganizationalGoalId = keyResultDTO.GoalId,
+                Type = keyResultDTO.Type
+            };
+
+            _context.OrganizationalKeyResults.Add(kr);
 
             var result = await _context.SaveChangesAsync();
 
@@ -435,6 +701,39 @@ namespace GoalMakerServer.Controllers
             {
                 var lastId = _context.Initiatives.Max(g => g.Id);
                 return Created("~api/GoalMaker/GetInitiative?initiativeId=" + lastId, i);
+            }
+            return BadRequest("problem with creating new initiative ");
+        }
+
+        [HttpPost("NewOrganizationalInitiative")]
+        public async Task<ActionResult<InitiativeDTO>> NewOrganizationalInitiative([FromBody] InitiativeDTO initiativeDTO)
+        {
+            if (initiativeDTO == null) return BadRequest("bad request");
+
+            var keyresult = _context.OrganizationalKeyResults.FirstOrDefault(kr => kr.Id == initiativeDTO.KeyResultId);
+
+            if (keyresult == null) return BadRequest("orgniazational key result with that id doesnt exists");
+
+            Organizationalnitiative i = new Organizationalnitiative
+            {
+                Name = initiativeDTO.Name,
+                Description = initiativeDTO.Description,
+                InitiativeState = initiativeDTO.InitiativeState,
+                DateCreated = DateTime.Now,
+                Comments = initiativeDTO.Comments,
+                OrganizationalKeyResultId = initiativeDTO.KeyResultId,
+                OwnerId = initiativeDTO.OwnerId
+
+            };
+
+            _context.Organizationalnitiatives.Add(i);
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                var lastId = _context.Initiatives.Max(g => g.Id);
+                return Ok();
             }
             return BadRequest("problem with creating new initiative ");
         }

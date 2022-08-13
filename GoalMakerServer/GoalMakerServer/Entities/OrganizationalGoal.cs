@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoalMakerServer.Entities
 {
-    public class Goal
+    public class OrganizationalGoal
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -20,17 +20,13 @@ namespace GoalMakerServer.Entities
         [ForeignKey("User")]
         public int GoalOwnerId { get; set; }
         public User GoalOwner { get; set; }
-        
+
         [ForeignKey("Team")]
-        public int TeamId { get; set; }
-        public Team Team { get; set; }
+        public int LeadershipTeamId { get; set; }
+        public Team LeadershipTeam { get; set; }
 
         [ForeignKey("Cycle")]
         public int CycleId { get; set; }
         public Cycle Cycle { get; set; }
-
-        [ForeignKey("OrganizationalGoal")]
-        public int OrganizationalGoalId { get; set; }
-        public OrganizationalGoal OrganizationalGoal { get; set; }
     }
 }

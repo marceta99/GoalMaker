@@ -14,6 +14,8 @@ namespace GoalMakerServer.Entities
         public int ConfidenceLevel { get; set; }
         public string TeamCountry { get; set; }
 
+        public bool IsLeadership { get; set; }
+
         [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
         public Organization Organization { get; set; }

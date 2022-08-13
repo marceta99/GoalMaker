@@ -7,7 +7,6 @@ import CircularBar from '../components/ProgressBar/CircularBar';
 import { useNavigate, useParams } from "react-router-dom";
 import '../../node_modules/@syncfusion/ej2-layouts/styles/material.css';
 import "../App.css"; 
-import {BiEdit} from "react-icons/bi"; 
 import TeamEditForm from '../components/Forms/TeamEditForm';
 import NewGoalForm from '../components/Forms/NewGoalForm';
 
@@ -71,7 +70,7 @@ const Goals = () => {
   if(activeNewGoal)return <NewGoalForm team={team} setActiveNewGoal={setActiveNewGoal} setGoals={setGoals}/>
 
   return (
-    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl ">
+    <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl " style={{boxShadow:"5px 5px 5px 5px #6b8ce6"}}>
 
       {team && 
       <div className="myContainer">
