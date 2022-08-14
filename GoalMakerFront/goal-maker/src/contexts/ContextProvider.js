@@ -13,6 +13,7 @@ export const ContextProvider = ({children})=>{
     const [activeMenu, setActiveMenu] = useState(true) ; 
     const [isClicked, setIsClicked] = useState(initialState); 
     const [screenSize, setScreenSize] = useState(undefined);
+    const [leadershipTeam, setLeadershipTeam]= useState();
 
     //argument clicked is string ("chart", "chat" , "userProfile", "notifications" )
     const handleClick = (clicked)=>{
@@ -28,7 +29,9 @@ export const ContextProvider = ({children})=>{
             setIsClicked : setIsClicked, 
             handleClick : handleClick,
             screenSize: screenSize, 
-            setScreenSize : setScreenSize
+            setScreenSize : setScreenSize,
+            leadershipTeam: leadershipTeam,
+            setLeadershipTeam: setLeadershipTeam
         }}> 
             {children}
         </StateContext.Provider>

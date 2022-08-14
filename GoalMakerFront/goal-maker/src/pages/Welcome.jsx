@@ -1,4 +1,4 @@
-import React, { useState } from 'react' ; 
+import React, { useEffect, useState } from 'react' ; 
 import "../App.css";
 import {BrowserRouter, Route, Routes} from "react-router-dom"; 
 import {FiSettings} from "react-icons/fi" ; 
@@ -14,7 +14,21 @@ import OrganizationKeyResults from './OrganizationKeyResults';
 import OrganizationKeyResult from './OrganizationKeyResult';
 
 const Welcome = () => {
-    const {activeMenu} = useStateContext() ;  
+  const {activeMenu, setLeadershipTeam} = useStateContext() ;  
+
+  useEffect(()=>{
+      const getData = async ()=>{
+      const response1 =await
+      fetch("https://localhost:5001/api/GoalMaker/GetOrganizationLeadershipTeam?organizationId="+1)  
+      const data1 = await response1.json() ; 
+      setLeadershipTeam(data1) ;
+      console.log("leadership team is");
+      console.log(data1); 
+
+      }
+      getData();
+  },[]);
+
   return (
     <div>
         <div className='flex relative dark:bg-main-dark-bg'>

@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import "./TeamEditForm.css"; 
+import { useStateContext } from '../../contexts/ContextProvider';
 
 const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
 
   const [employees, setEmployees] = useState(); 
   const [selectedValue, setSelectedValue] = useState(); 
+  const [organizationGoals, setOrganizationGoals]= useState(); 
+  const [selectedOrganizationalGoal, setSelectedOrganizationalGoal] = useState();
+  const {leadershipTeam} = useStateContext() ;  
+  
 
   useEffect(()=>{
     const getData = async()=>{
@@ -13,6 +18,12 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
         const data1 = await response1.json() ; 
         setEmployees(data1) ; 
         console.log(data1);
+
+        const response2 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetOrganizationalTeamGoals?leadershipTeamId="+leadershipTeam.id);  
+        const data2 = await response2.json() ; 
+        setOrganizationGoals(data2) ; 
+        console.log(data2);
        
         }
       getData() ;
@@ -30,7 +41,8 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
         "endDate": e.target[4].value,
         "goalOwnerId":selectedValue,
         "teamId": team.id,
-        cycleId : 1
+        cycleId : 1,
+        organizationalGoalId: selectedOrganizationalGoal
       };
     const response = await fetch("https://localhost:44344/api/GoalMaker/NewGoal",{
         method: "POST", 
@@ -93,6 +105,20 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
                             {employees.map((employee, index)=>(
                                 <option key={index} value={employee.id}>
                                     {employee.firstName+ " "+employee.lastName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    }
+                    {organizationGoals && 
+                        <div class="input-field">
+                        <label>Contribute to :</label>
+                        <select required 
+                            onChange={(e)=>setSelectedOrganizationalGoal(e.target.value)}>
+                            <option disabled selected>Select organizational goal</option>
+                            {organizationGoals.map((goal, index)=>(
+                                <option key={index} value={goal.id}>
+                                    {goal.name}
                                 </option>
                             ))}
                         </select>

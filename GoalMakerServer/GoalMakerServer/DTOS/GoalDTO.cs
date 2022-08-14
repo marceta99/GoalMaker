@@ -17,5 +17,6 @@ namespace GoalMakerServer.DTOS
         public int GoalOwnerId { get; set; }
         public int TeamId { get; set; }
         public int CycleId { get; set; }
+        public int OrganizationalGoalId { get; set; }
     }
 }

@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import "./TeamEditForm.css"; 
+import { useStateContext } from '../../contexts/ContextProvider';
+
 
 const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal}) => {
 
   const [employees, setEmployees] = useState(); 
   const [selectedOwner, setSelectedOwner] = useState(); 
+  const [organizationGoals, setOrganizationGoals]= useState(); 
+  const [selectedOrganizationalGoal, setSelectedOrganizationalGoal] = useState();
+  const {leadershipTeam} = useStateContext() ;  
+  const [organizationalGoal, setOrganizationalGoal] = useState(); 
 
   useEffect(()=>{
     console.log(goal);
@@ -16,6 +22,20 @@ const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal
         console.log(data1);
        
         setSelectedOwner(goalOwner.id); 
+
+        const response3 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetOrganizationalGoal?goalId="+goal.organizationalGoalId);  
+        const data3 = await response3.json() ; 
+        setOrganizationalGoal(data3) ; 
+
+        setSelectedOrganizationalGoal(data3.id);
+
+        const response2 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetOrganizationalTeamGoals?leadershipTeamId="+leadershipTeam.id);  
+        const data2 = await response2.json() ; 
+        setOrganizationGoals(data2) ; 
+        console.log(data2);
+
         }
       getData() ;
   },[]);
@@ -30,7 +50,8 @@ const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal
         "startDate": e.target[3].value,
         "endDate": e.target[4].value,
         "goalOwnerId":selectedOwner,
-        cycleId : 1
+        cycleId : 1,
+        organizationalGoalId: selectedOrganizationalGoal
       };
     const response = await fetch("https://localhost:44344/api/GoalMaker/UpdateGoal?goalId="+goal.id,{
         method: "PUT", 
@@ -104,6 +125,22 @@ const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal
                         </select>
                     </div>
                     }
+
+                    {organizationGoals && 
+                        <div class="input-field">
+                        <label>Contribute to :</label>
+                        <select required 
+                            onChange={(e)=>setSelectedOrganizationalGoal(e.target.value)}>
+                            <option disabled selected value={organizationalGoal?.id}>
+                                {organizationalGoal?.name}</option>
+                            {organizationGoals.map((goal, index)=>(
+                                <option key={index} value={goal.id}>
+                                    {goal.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    }   
                    
                 </div>
 

@@ -564,7 +564,8 @@ namespace GoalMakerServer.Controllers
                 EndDate = goalDTO.EndDate, 
                 CycleId = goalDTO.CycleId, 
                 TeamId = goalDTO.TeamId , 
-                GoalOwnerId  = goalDTO.GoalOwnerId
+                GoalOwnerId  = goalDTO.GoalOwnerId,
+                OrganizationalGoalId = goalDTO.OrganizationalGoalId
             }; 
 
             _context.Goals.Add(g);
@@ -866,6 +867,7 @@ namespace GoalMakerServer.Controllers
             goal.StartDate = goalDTO.StartDate;
             goal.EndDate = goalDTO.EndDate;
             goal.GoalOwnerId = goalDTO.GoalOwnerId;
+            goal.OrganizationalGoalId = goalDTO.OrganizationalGoalId;
             //goal.TeamId = goalDTO.TeamId; ovo mi je isto nelogicno da goal promeni tim 
             //goal.CycleId = goalDTO.CycleId;
 
