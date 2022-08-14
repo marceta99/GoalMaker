@@ -112,6 +112,7 @@ const NewTeamForm = ({setActiveNewTeam, organization, setTeams}) => {
                         </div>
 
                         <div class="input-field">
+                        <label>Team Members</label>
                             <Select
                             isMulti={true}
                             value={selectedMembers}

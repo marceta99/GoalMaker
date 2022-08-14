@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import "./TeamEditForm.css"; 
 import { useStateContext } from '../../contexts/ContextProvider';
+import Select from 'react-select';
 
 const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
 
@@ -9,7 +10,9 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
   const [organizationGoals, setOrganizationGoals]= useState(); 
   const [selectedOrganizationalGoal, setSelectedOrganizationalGoal] = useState();
   const {leadershipTeam} = useStateContext() ;  
-  
+  const [teams, setTeams] = useState(); 
+  const [selectedTeams, setSelectedTeams] = useState();
+  const [options, setOptions] = useState(); 
 
   useEffect(()=>{
     const getData = async()=>{
@@ -24,7 +27,18 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
         const data2 = await response2.json() ; 
         setOrganizationGoals(data2) ; 
         console.log(data2);
+
+        const response3 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetOrganizationTeamsWithId?organizationId="+1);  
+        const data3 = await response3.json() ; 
+        setTeams(data3) ; 
+        console.log(data3);
        
+        let opcije = data3.map((team)=>{
+            return {value : team, label : team.name}
+        } )
+        setOptions(opcije) ;
+
         }
       getData() ;
   },[]);
@@ -33,6 +47,12 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
     setActiveNewGoal(false); 
     console.log(e); 
     console.log(selectedValue); 
+
+    const dependedTeams = [];
+    selectedTeams.forEach(t => {
+        dependedTeams.push(t.value);
+    });
+
     const newGoal = {
         "name": e.target[0].value,
         "percentageOfSuccess":e.target[1].value,
@@ -42,7 +62,8 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
         "goalOwnerId":selectedValue,
         "teamId": team.id,
         cycleId : 1,
-        organizationalGoalId: selectedOrganizationalGoal
+        organizationalGoalId: selectedOrganizationalGoal,
+        dependedTeams: dependedTeams
       };
     const response = await fetch("https://localhost:44344/api/GoalMaker/NewGoal",{
         method: "POST", 
@@ -124,6 +145,22 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
                         </select>
                     </div>
                     }
+
+                    {teams && 
+                    <>
+                        <div class="input-field">
+                        <label>Depending teams</label>
+                            <Select
+                            isMulti={true}
+                            value={selectedTeams}
+                            onChange={(selectedOptions)=>{
+                                setSelectedTeams(selectedOptions); 
+                                console.log(selectedOptions);
+                            }}
+                            options={options}
+                            />
+                        </div>    
+                    </>}
                    
                 </div>
 

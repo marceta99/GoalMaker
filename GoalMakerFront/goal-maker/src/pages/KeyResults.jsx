@@ -8,6 +8,7 @@ import CircularBar from '../components/ProgressBar/CircularBar';
 import { useNavigate } from "react-router-dom";
 import NewKeyResultForm from '../components/Forms/NewKeyResultForm';
 import GoalEditForm from '../components/Forms/GoalEditForm';
+import { teamsGrid } from '../data/template';
 
 
 const KeyResults = () => {
@@ -18,7 +19,7 @@ const KeyResults = () => {
   const [activeEditGoal, setActiveEditGoal] = useState(false) ;
   const [goalOwner, setGoalOwner] = useState() ; 
   const navigate = useNavigate() ; 
-  
+  const [dependedTeams, setDependedTeams]= useState();
 
   useEffect(()=>{
     console.log("REFRESHHHH");
@@ -44,6 +45,14 @@ const KeyResults = () => {
         setGoalOwner(data3) ; 
         console.log(data3);
 
+        const response4 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetGoalDependedTeams?goalId="+goalId);  
+        const data4 = await response4.json() ;
+        data4.forEach(t => {
+          t.percentageOfSuccess = Math.round(t.percentageOfSuccess); 
+        }); 
+        setDependedTeams(data4) ; 
+        console.log(data4);
         }
         getData(); 
   },[]) ;
@@ -57,8 +66,19 @@ const KeyResults = () => {
     
 
   }
+  const onSelectTeam = (e)=>{
+    const rowIndex = e.row.getAttribute('aria-rowindex') ; 
+    const selectedTeam = dependedTeams[rowIndex]; 
+
+    console.log(selectedTeam);
+    navigate("/team/"+selectedTeam.id) ; 
+    
+
+  }
+
   if(activeEditGoal)return <GoalEditForm goal={goal} setActiveEditGoal={setActiveEditGoal}
-                            goalOwner={goalOwner} setGoalOwner={setGoalOwner} setGoal={setGoal}/>
+                            goalOwner={goalOwner} setGoalOwner={setGoalOwner} setGoal={setGoal}
+                            dependedTeams={dependedTeams} setDependedTeams={setDependedTeams}/>
 
   if(activeNewKeyResult)return <NewKeyResultForm goal={goal} setActiveNewKeyResult={setActiveNewKeyResult}
                               setKeyResults={setKeyResults}/>
@@ -115,6 +135,31 @@ const KeyResults = () => {
         <Inject services={[Search, Page, Toolbar]} />
 
       </GridComponent>
+
+      <div style={{margin:"10px"}}>
+        <h1>Teams on which this goal depends :</h1>
+      </div>
+
+      {dependedTeams && <>
+        <GridComponent
+        dataSource={dependedTeams}
+        width="auto"
+        allowPaging
+        allowSorting
+        toolbar={['Search']}
+        rowSelected={(e)=>onSelectTeam(e)}
+      >
+        <ColumnsDirective>
+          {teamsGrid.map((item, index) => <ColumnDirective key={index} {...item} />)}
+        </ColumnsDirective>
+
+        <Inject services={[Search, Page, Toolbar]} />
+
+      </GridComponent>
+      </>}  
+
+
+
     </div>
   )
 }

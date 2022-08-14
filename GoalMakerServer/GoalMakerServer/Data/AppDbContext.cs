@@ -26,11 +26,13 @@ namespace GoalMakerServer.Data
         public DbSet<OrganizationalKeyResult> OrganizationalKeyResults { get; set; }
         public DbSet<Organizationalnitiative> Organizationalnitiatives { get; set; }
         public DbSet<OrganizationalMilestone> OrganizationalMilestones { get; set; }
+        public DbSet<GoalDependedTeam> GoalsDependedTeams { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TeamMember>().HasKey(ia => new { ia.TeamId, ia.MemberId });
+            modelBuilder.Entity<GoalDependedTeam>().HasKey(gt => new { gt.TeamId, gt.GoalId });
         }
     }
 }

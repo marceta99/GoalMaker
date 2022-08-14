@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import "./TeamEditForm.css"; 
 import { useStateContext } from '../../contexts/ContextProvider';
+import Select from 'react-select';
 
 
-const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal}) => {
+
+const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal, dependedTeams, setDependedTeams}) => {
 
   const [employees, setEmployees] = useState(); 
   const [selectedOwner, setSelectedOwner] = useState(); 
@@ -11,8 +13,17 @@ const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal
   const [selectedOrganizationalGoal, setSelectedOrganizationalGoal] = useState();
   const {leadershipTeam} = useStateContext() ;  
   const [organizationalGoal, setOrganizationalGoal] = useState(); 
+  const [teams, setTeams]= useState();
+  const [options, setOptions]= useState(); 
+  const [selectedTeams, setSelectedTeams]= useState();
 
   useEffect(()=>{
+    //on start set alredy selected depended teams to be selected
+    const arr = dependedTeams.map((team)=>{
+        return {value : team, label : team.name}
+    })
+    setSelectedTeams(arr);
+
     console.log(goal);
     const getData = async()=>{
         const response1 = 
@@ -36,23 +47,58 @@ const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal
         setOrganizationGoals(data2) ; 
         console.log(data2);
 
+        const response4 = 
+        await fetch("https://localhost:5001/api/GoalMaker/GetOrganizationTeamsWithId?organizationId="+1);  
+        const data4 = await response4.json() ; 
+        setTeams(data4) ; 
+        console.log(data4);
+       
+        const opcije = [];
+        for(const team of data4){
+            if(!isAlredyDependedTeam(team)){
+                opcije.push({value : team, label : team.name}); 
+            }
+        }
+        console.log("opcije na pocetku su: ");
+        console.log(opcije);
+        setOptions(opcije);
+
         }
       getData() ;
   },[]);
+  const isAlredyDependedTeam = (team)=>{
+    console.log(dependedTeams);
+    for(const t of dependedTeams){
+        if(t.id === team.id)return true;
+    } 
+    return false ; 
+  }
+
 
   const onSubmit = async (e)=>{
+    setDependedTeams([]);
+    const helperDependingTeams = [];  
+    selectedTeams.forEach(t => {
+        dependedTeams.push(t.value);
+        helperDependingTeams.push(t.value); 
+    });
+    setDependedTeams([...helperDependingTeams]); 
+
     setActiveEditGoal(false); 
     console.log(e); 
     const updatedGoal = {
         "name": e.target[0].value,
-        "percentageOfSuccess":e.target[1].value,
-        "confidenceLevel": e.target[2].value,
+        "percentageOfSuccess":goal.percentageOfSuccess,
+        "confidenceLevel": goal.confidenceLevel,
         "startDate": e.target[3].value,
         "endDate": e.target[4].value,
         "goalOwnerId":selectedOwner,
+        "teamId":goal.teamId,
         cycleId : 1,
-        organizationalGoalId: selectedOrganizationalGoal
+        organizationalGoalId: selectedOrganizationalGoal,
+        dependedTeams: helperDependingTeams
       };
+      console.log(updatedGoal);
     const response = await fetch("https://localhost:44344/api/GoalMaker/UpdateGoal?goalId="+goal.id,{
         method: "PUT", 
         body : JSON.stringify(updatedGoal),
@@ -141,6 +187,22 @@ const GoalEditForm = ({goal, setActiveEditGoal, goalOwner, setGoalOwner, setGoal
                         </select>
                     </div>
                     }   
+
+                    {teams && 
+                    <>
+                        <div class="input-field">
+                        <label>Depending teams</label>
+                            <Select
+                            isMulti={true}
+                            value={selectedTeams}
+                            onChange={(selectedOptions)=>{
+                                setSelectedTeams(selectedOptions); 
+                                console.log(selectedOptions);
+                            }}
+                            options={options}
+                            />
+                        </div>    
+                    </>}
                    
                 </div>
 

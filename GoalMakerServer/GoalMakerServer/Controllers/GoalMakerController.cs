@@ -245,6 +245,35 @@ namespace GoalMakerServer.Controllers
             return Ok(keyResults);
         }
 
+        [HttpGet("GetGoalDependedTeams")]
+        public async Task<ActionResult<List<TeamDTO>>> GetGoalDependedTeams([FromQuery] int goalId)
+        {
+            var gdts = await _context.GoalsDependedTeams
+                .Where(gtd => gtd.GoalId == goalId)
+                .Include(gtd=> gtd.Team)
+                .ToListAsync();
+
+            List<TeamDTO> teams = new List<TeamDTO>();
+
+            foreach(var gt in gdts)
+            {
+                TeamDTO tdo = new TeamDTO
+                {
+                    Id = gt.Team.Id,
+                    Name = gt.Team.Name,
+                    OrganizationId = gt.Team.OrganizationId,
+                    Owner = GetTeamOwnerPrivate(gt.Team.Id),
+                    PercentageOfSuccess = gt.Team.PercentageOfSuccess,
+                    ConfidenceLevel = gt.Team.ConfidenceLevel,
+                    TeamCountry = gt.Team.TeamCountry
+                };
+                teams.Add(tdo);
+            }
+
+            return Ok(teams);
+        }
+
+
         [HttpGet("GetOrganizationalGoalKeyResults")]
         public async Task<ActionResult<List<Goal>>> GetOrganizationalGoalKeyResults([FromQuery] int goalId)
         {
@@ -575,7 +604,21 @@ namespace GoalMakerServer.Controllers
             if (result > 0)
             {
                 var lastId = _context.Goals.Max(g => g.Id);
-                return Created("~api/GoalMaker/GetGoal?goalId=" + lastId, g);
+                
+                foreach(var team in goalDTO.DependedTeams)
+                {
+                    GoalDependedTeam gdt = new GoalDependedTeam { GoalId = lastId, TeamId = team.Id };
+                    _context.GoalsDependedTeams.Add(gdt);
+
+                    var result1 = await _context.SaveChangesAsync();
+
+                    if (result1 <= 0)
+                    {
+                        return BadRequest("problem with adding depended team to goal"); 
+                    }
+                }
+
+                return Ok("successfully created new goal and added depended teams go that goal");
             }
             return BadRequest("problem with creating new goal ");
         }
@@ -872,13 +915,25 @@ namespace GoalMakerServer.Controllers
             //goal.CycleId = goalDTO.CycleId;
 
             try {
-                var result = await _context.SaveChangesAsync();
-                if (result > 0)
-                {
-                    return Ok("goal updated");
-                }
-                return BadRequest("problem with updating goal ");
+               var gdts = await _context.GoalsDependedTeams.Where(gdt => gdt.GoalId == goal.Id).ToListAsync();
 
+                _context.GoalsDependedTeams.RemoveRange(gdts);
+
+                    foreach (var team in goalDTO.DependedTeams)
+                    {
+                        GoalDependedTeam gdt = new GoalDependedTeam { GoalId = goal.Id, TeamId = team.Id };
+
+                        _context.GoalsDependedTeams.Add(gdt);
+
+                        var result1 = await _context.SaveChangesAsync();
+
+                        if (result1 <= 0)
+                        {
+                            return BadRequest("problem with adding depended team to goal");
+                        }
+                    }
+
+                    return Ok("goal updated");
             }
             catch (Exception e)
             {
