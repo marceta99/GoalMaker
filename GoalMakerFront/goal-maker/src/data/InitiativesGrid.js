@@ -49,11 +49,5 @@ export const initiativesGrid = [
       template: gridInitiatveState,
       textAlign: 'Center',
       width: '120',
-    },
-    { field: 'description',
-      headerText: 'description',
-      width: '170',
-      textAlign: 'Center',
-    },  
-    
+    }
   ];

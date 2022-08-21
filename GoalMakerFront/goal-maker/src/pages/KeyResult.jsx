@@ -63,25 +63,38 @@ useEffect(()=>{
           </button>
         </div>
 
+      <div style={{display:"flex" , flexDirection:"column",width:"600px", margin:"10px"}}>
         <div className="e-card right" id="basic">
-          <div className="e-card-header">
-            <div className="e-card-header-caption">
-              <div className="e-card-title">Key Result Description</div>
+            <div className="e-card-header">
+              <div className="e-card-header-caption">
+                <div className="e-card-title">Key Result Description</div>
+              </div>
             </div>
-          </div>
-          <div className="e-card-content">
-            Communicating with Windows 10 and Other Apps, the second in a five-part series written by Succinctly series
-            author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
-            the White Paper section of Syncfusion’s Technology Resource Portal.
-            </div>
-            <div className="e-card-actions e-card-vertical">
+            <div className="e-card-content">
+              Communicating with Windows 10 and Other Apps, the second in a five-part series written by Succinctly series
+              author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
+              the White Paper section of Syncfusion’s Technology Resource Portal.
+              </div>
               
-            <button className="e-card-btn" style={{color : "blue"}} 
-            onClick={()=>setActiveEditKeyResult(true)}>Edit Key Result</button>
-            <button className="e-card-btn">Delete Key Result</button>
-            </div>
+        </div>
+
+        <div style={{display:"flex" , flexDirection:"row", justifyContent:"end"}}>   
+              <button onClick={()=>setActiveEditKeyResult(true)} style={{margin:"5px"}} >
+                <span class="btnText dugme">Edit KeyResult</span>
+                <i class="uil uil-navigator"></i>
+              </button>
+              <button onClick={()=>{}}   >
+                <span class="btnText dugme" style={{backgroundColor:"red"}}>Delete KeyResult</span>
+                <i class="uil uil-navigator"></i>
+              </button>
+  
+          </div>
       </div>
 
+        
+
+
+      
     </div>
       </>
       }

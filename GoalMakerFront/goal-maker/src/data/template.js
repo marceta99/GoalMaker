@@ -61,11 +61,7 @@ export const teamsGrid = [
       template: gridPercentageTeam,
       width: '170',
       textAlign: 'Center',
-    },
-    { headerText: 'Country',
-    width: '120',
-    textAlign: 'Center',
-    template: gridTeamCountry },
+    }
     
     
   ];
@@ -87,83 +83,23 @@ export const teamsGrid = [
           icon: <AiOutlineTeam />,
         },
         {
-          name: 'organization goals',
+          name: 'organizational goals',
           route: 'organizationGoals',
           icon: <GiStairsGoal />,
         },
-      ],
-    },
-  
-    {
-      title: 'Pages',
-      links: [
         {
-          name: 'calendar',
+          name: 'Check-ins',
           route: 'calendar',
           icon: <AiOutlineCalendar />,
         },
         {
-          name: 'kanban',
+          name: 'Analytics',
           route: 'kanban',
           icon: <BsKanban />,
-        },
-        {
-          name: 'editor',
-          route: 'editor',
-          icon: <FiEdit />,
-        },
-        {
-          name: 'color-picker',
-          route: 'colorPicker',
-          icon: <BiColorFill />,
-        },
+        }
       ],
     },
-    {
-      title: 'Charts',
-      links: [
-        {
-          name: 'line',
-          route: 'line',
-          icon: <AiOutlineStock />,
-        },
-        {
-          name: 'area',
-          route: 'area',
-          icon: <AiOutlineAreaChart />,
-        },
   
-        {
-          name: 'bar',
-          route: 'bar',
-          icon: <AiOutlineBarChart />,
-        },
-        {
-          name: 'pie',
-          route: 'pie',
-          icon: <FiPieChart />,
-        },
-        {
-          name: 'financial',
-          route: 'financial',
-          icon: <RiStockLine />,
-        },
-        {
-          name: 'color-mapping',
-          route: 'color-mapping',
-          icon: <BsBarChart />,
-        },
-        {
-          name: 'pyramid',
-          route: 'pyramid',
-          icon: <GiLouvrePyramid/>,
-        },
-        {
-          name: 'stacked',
-          route: 'stacked',
-          icon: <AiOutlineBarChart />,
-        },
-      ],
-    },
+    
   ];
   

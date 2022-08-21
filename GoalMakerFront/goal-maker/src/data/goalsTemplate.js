@@ -54,7 +54,7 @@ export const goalsGrid = [
       template: gridPercentageGoal,
       width: '170',
       textAlign: 'Center',
-    },
+    }/*,
     { headerText: 'Start Date',
       template: gridStartDate,
       width: '170',
@@ -65,6 +65,6 @@ export const goalsGrid = [
       width: '170',
       textAlign: 'Center',
     },
-    
+    */
     
   ];

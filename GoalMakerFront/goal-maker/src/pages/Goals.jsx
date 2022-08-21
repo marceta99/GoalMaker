@@ -86,6 +86,7 @@ const Goals = () => {
           </button>
         </div>
 
+        <div style={{display:"flex" , flexDirection:"column",width:"600px", margin:"10px"}}>
         <div className="e-card right" id="basic" style={{marginLeft :"10px"}}>
           <div className="e-card-header">
             <div className="e-card-header-caption">
@@ -97,14 +98,22 @@ const Goals = () => {
             author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
             the White Paper section of Syncfusion’s Technology Resource Portal.
             </div>
-            <div className="e-card-actions e-card-vertical">
-              
-            <button onClick={()=>setActiveForm(true)} 
-            className="e-card-btn" style={{color : "blue"}}>Edit Team</button>
-            <button className="e-card-btn">Delete Team</button>
-            </div>
-      </div>
+            
+        </div>
 
+        <div style={{display:"flex" , flexDirection:"row", justifyContent:"end"}}>   
+            <button onClick={()=>setActiveForm(true)} style={{margin:"5px"}} >
+              <span class="btnText dugme">Edit Team</span>
+              <i class="uil uil-navigator"></i>
+            </button>
+            <button onClick={()=>{}}   >
+              <span class="btnText dugme" style={{backgroundColor:"red"}}>Delete Team</span>
+              <i class="uil uil-navigator"></i>
+            </button>
+            
+        </div>
+        
+        </div>
     </div>
     }
       <GridComponent

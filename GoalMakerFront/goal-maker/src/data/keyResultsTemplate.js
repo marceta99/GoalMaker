@@ -44,11 +44,6 @@ export const keyResultsGrid = [
       template: gridPercentageKeyResult,
       width: '170',
       textAlign: 'Center',
-    },
-    { field: 'description',
-      headerText: 'description',
-      width: '100',
-      textAlign: 'Center',
-    },
+    }
     
   ];

@@ -7,8 +7,7 @@ import CircularBar from '../components/ProgressBar/CircularBar';
 import { useNavigate, useParams } from "react-router-dom";
 import '../../node_modules/@syncfusion/ej2-layouts/styles/material.css';
 import "../App.css"; 
-import TeamEditForm from '../components/Forms/TeamEditForm';
-import NewGoalForm from '../components/Forms/NewGoalForm';
+
 
 const OrganizationGoals = () => {
   const  [goals, setGoals] = useState();
@@ -78,24 +77,38 @@ const OrganizationGoals = () => {
         </button>
       </div>
 
-      <div className="e-card right" id="basic" style={{marginLeft :"10px"}}>
-        <div className="e-card-header">
-          <div className="e-card-header-caption">
-            <div className="e-card-title">Team Description</div>
+      <div style={{display:"flex" , flexDirection:"column", width:"600px", margin:"10px"}}>
+        <div className="e-card right" id="basic" style={{marginLeft :"10px"}}>
+          <div className="e-card-header">
+            <div className="e-card-header-caption">
+              <div className="e-card-title">Team Description</div>
+            </div>
           </div>
+          <div className="e-card-content">
+            Communicating with Windows 10 and Other Apps, the second in a five-part series written by Succinctly series
+            author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
+            the White Paper section of Syncfusion’s Technology Resource Portal.
+            </div>
+        
+        
+        
+        
         </div>
-        <div className="e-card-content">
-          Communicating with Windows 10 and Other Apps, the second in a five-part series written by Succinctly series
-          author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
-          the White Paper section of Syncfusion’s Technology Resource Portal.
-          </div>
-          <div className="e-card-actions e-card-vertical">
-            
-          <button onClick={()=>{}} 
-          className="e-card-btn" style={{color : "blue"}}>Edit Team</button>
-          <button className="e-card-btn">Delete Team</button>
-          </div>
-    </div>
+
+        <div style={{display:"flex" , flexDirection:"row", justifyContent:"end"}}>   
+              <button onClick={()=>{}} style={{margin:"5px"}} >
+                <span class="btnText dugme">Edit Team</span>
+                <i class="uil uil-navigator"></i>
+              </button>
+              <button onClick={()=>{}}   >
+                <span class="btnText dugme" style={{backgroundColor:"red"}}>Delete Team</span>
+                <i class="uil uil-navigator"></i>
+              </button>
+              
+        </div>
+      </div>
+
+      
 
   </div>
   }

@@ -149,7 +149,7 @@ const NewGoalForm = ({team, setActiveNewGoal,setGoals}) => {
                     {teams && 
                     <>
                         <div class="input-field">
-                        <label>Depending teams</label>
+                        <label>Depends on</label>
                             <Select
                             isMulti={true}
                             value={selectedTeams}

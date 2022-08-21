@@ -105,7 +105,8 @@ const OrganizationKeyResults = () => {
           </button>
         </div>
 
-        <div className="e-card right" id="basic">
+      <div style={{display:"flex" , flexDirection:"column",width:"600px", margin:"10px"}}>
+      <div className="e-card right" id="basic">
           <div className="e-card-header">
             <div className="e-card-header-caption">
               <div className="e-card-title">Goal Description</div>
@@ -116,13 +117,22 @@ const OrganizationKeyResults = () => {
             author Matteo Pagani. To download the complete white paper, and other papers in the series, visit
             the White Paper section of Syncfusion’s Technology Resource Portal.
             </div>
-            <div className="e-card-actions e-card-vertical">
-              
-            <button className="e-card-btn" style={{color : "blue"}} 
-            onClick={()=>{}}>Edit Goal</button>
-            <button className="e-card-btn">Delete Goal</button>
-            </div>
+            
       </div>
+
+      <div style={{display:"flex" , flexDirection:"row", justifyContent:"end"}}>   
+              <button onClick={()=>{}} style={{margin:"5px"}} >
+                <span class="btnText dugme">Edit Goal</span>
+                <i class="uil uil-navigator"></i>
+              </button>
+              <button onClick={()=>{}}   >
+                <span class="btnText dugme" style={{backgroundColor:"red"}}>Delete Goal</span>
+                <i class="uil uil-navigator"></i>
+              </button>
+              
+        </div>
+      </div>
+
 
     </div>
     }   
